@@ -60,12 +60,6 @@ class SeriesRoutine:
 
     def readFiles(self, directoryPath, sourcePath):
         langPath = classFileOperations.FileOperations.join(directoryPath, self.configuration.getValue("langPath"))
-
-        # searcher = classSearcher.Searcher(self.configuration)
-        #
-        # files = [f for f in classFileOperations.FileOperations.listdir(sourcePath) if
-        #          classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, f))]
-
         filesList = classFilesList.FilesList(self.configuration)
 
         for file in classFileOperations.FileOperations.listdir(sourcePath):
@@ -76,41 +70,11 @@ class SeriesRoutine:
             for file in vector[2]:
                 filesList.append(classFile.File(file, vector[0]))
 
-        #audioFiles = []
-        #subsFiles = []
-        #imageFile = None
-
-        # for folder in files:
-        #     if searcher.isVideoFile(folder):
-        #         videoFiles.append(classVideoFile.VideoFile(folder, sourcePath))
         videoFiles = filesList.filterVideoFiles()
-
-        files = []
-        # for vector in classFileOperations.FileOperations.walk(langPath):
-        #     for folder in vector[2]:
-        #         files.append(classFile.File(folder, vector[0]))
-
-
-
-        # for vector in classFileOperations.FileOperations.walk(langPath):
-        #     for folder in vector[2]:
-        #         files.append(classFile.File(folder, vector[0]))
-
         audioFiles=filesList.filterAudioFiles()
         subsFiles=filesList.filterSubsFiles()
-
-        # for folder in files:
-        #     if searcher.isAudioFile(folder.fileName):
-        #         audioFiles.append(classAudioFile.AudioFile(folder.fileName, folder.path))
-        #     if searcher.isSubsFile(folder.fileName):
-        #         subsFiles.append(classSubsFile.SubsFile(folder.fileName, folder.path))
-
-        # files = [f for f in classFileOperations.FileOperations.listdir(directoryPath) if
-        #          classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(directoryPath, f))]
-        # for file in files:
-        #     if searcher.isImageFile(file):
-        #         imageFile = classImageFile.ImageFile(file, directoryPath)
         imageFiles=filesList.filterImageFiles()
+
         return videoFiles, subsFiles, audioFiles, imageFiles[0]
 
     def analyzeFiles(self, videoFiles, subsFiles, audioFiles, imageFile):
@@ -129,8 +93,8 @@ class SeriesRoutine:
 
     def logAssemble(self, directory, assemble):
         assemble.episodesList.sort(key=lambda item: item.episodeNumber)
-        # self.logger.writeLog(directory, "info", "Файлы, сгруппированные по сериям:", "w+")
-        self.logger.writeLog(directory, "info", "Files:", "w+")
+        self.logger.writeLog(directory, "info", "Файлы, сгруппированные по сериям:", "w+")
+        #self.logger.writeLog(directory, "info", "Files:", "w+")
         for episode in assemble.episodesList:
             self.logger.writeLog(directory, "info", "------------------------------------")
             self.logger.writeLog(directory, "info", episode.episodeNumber + ":")
