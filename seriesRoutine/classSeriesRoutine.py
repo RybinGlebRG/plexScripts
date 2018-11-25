@@ -1,5 +1,5 @@
 import os
-import classAnalyzer, classConfiguration, classSubsFile, classLink, classSearcher, classAudioFile, \
+from seriesRoutine import classAnalyzer, classConfiguration, classSubsFile, classLink, classSearcher, classAudioFile, \
     classAssemble, classImageFile, classFile, classVideoFile, classPlex, classWatcher
 import classLogger
 import classFileOperations
@@ -15,7 +15,7 @@ class SeriesRoutine:
         #     classFileOperations.FileOperations.join(
         #         classFileOperations.FileOperations.dirname(classFileOperations.FileOperations.abspath(__file__)),
         #         "configurationMain.txt"))
-        self.configuration.load(sys.argv[0])
+        self.configuration.load(sys.argv[1])
         self.logger = classLogger.Logger()
         self.directoryPath = ""
 
@@ -142,6 +142,8 @@ class SeriesRoutine:
         # print(userConfugirationFile)
         if userConfugirationFile == "":
             return 1
+
+
 
         try:
             self.loadUserConfigurationFile(

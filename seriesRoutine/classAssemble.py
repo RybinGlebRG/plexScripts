@@ -1,5 +1,5 @@
-import classEpisode
-import classImageFile
+from seriesRoutine import classEpisode
+from seriesRoutine import classImageFile
 
 
 class Assemble:

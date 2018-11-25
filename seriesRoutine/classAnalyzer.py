@@ -1,5 +1,5 @@
 import re
-import classAnalyzingGroup, classPossibleNumbers
+from seriesRoutine import classAnalyzingGroup, classPossibleNumbers
 
 
 class Analyzer:

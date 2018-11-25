@@ -1,4 +1,4 @@
-import classKeyValue
+from seriesRoutine import classKeyValue
 import io
 import classFileOperations
 import classLogger
@@ -79,6 +79,7 @@ class Configuration:
         lines = classFileOperations.FileOperations.readFile(fileName)
 
         for line in lines:
+            #print(line)
             if line[0] != "#":
                 if getKeyFromString(line) != "":
                     if self.isKeyExists(getKeyFromString(line)):
