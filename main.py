@@ -1,6 +1,7 @@
-from animeRoutine import classAnimeRoutine
+from seriesRoutine import classSeriesRoutine
 import datetime
 
-animeRoutine = classAnimeRoutine.AnimeRoutine()
-animeRoutine.run()
+seriesRoutine = classSeriesRoutine.SeriesRoutine()
+seriesRoutine.run()
 #print(datetime.datetime.now())
+
