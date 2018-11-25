@@ -4,16 +4,18 @@ from animeRoutine import classAnalyzer, classConfiguration, classSubsFile, class
 import classLogger
 import classFileOperations
 import traceback
+import sys
 
 
 class AnimeRoutine:
 
     def __init__(self):
         self.configuration = classConfiguration.Configuration()
-        self.configuration.load(
-            classFileOperations.FileOperations.join(
-                classFileOperations.FileOperations.dirname(classFileOperations.FileOperations.abspath(__file__)),
-                "configurationMain.txt"))
+        # self.configuration.load(
+        #     classFileOperations.FileOperations.join(
+        #         classFileOperations.FileOperations.dirname(classFileOperations.FileOperations.abspath(__file__)),
+        #         "configurationMain.txt"))
+        self.configuration.load(sys.argv[0])
         self.logger = classLogger.Logger()
         self.directoryPath = ""
 
