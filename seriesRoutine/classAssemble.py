@@ -1,5 +1,6 @@
 from seriesRoutine import classEpisode
-from seriesRoutine import classImageFile
+#from seriesRoutine import classImageFile
+from seriesRoutine import classFile
 
 
 class Assemble:
@@ -20,9 +21,10 @@ class Assemble:
         for item in self.videoFiles:
             self.episodesList.append(classEpisode.Episode(item.number))
             self.episodesList[-1].addVideoFile(item)
-            self.episodesList[-1].addImageFile(classImageFile.ImageFile(self.imageFile.fileName,self.imageFile.path))
+            # self.episodesList[-1].addImageFile(classImageFile.ImageFile(self.imageFile.fileName,self.imageFile.path))
             # for i in self.episodesList:
             #     print(i.episodeNumber)
+            self.episodesList[-1].addImageFile(classFile.File(self.imageFile.fileName, self.imageFile.path))
             if self.configuration.getValue("linkSubs") != "N":
                 for file in self.subsFiles:
                     if file.number == self.episodesList[-1].episodeNumber:

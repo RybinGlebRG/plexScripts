@@ -1,10 +1,16 @@
 import os
-from seriesRoutine import classAnalyzer, classConfiguration, classSubsFile, classLink, classSearcher, classAudioFile, \
-    classAssemble, classImageFile, classFile, classVideoFile, classPlex, classWatcher
+from seriesRoutine import classAnalyzer, classConfiguration,  classLink,   \
+    classAssemble,  classFile, classPlex, classWatcher
+#from seriesRoutine import classSubsFile
+#from seriesRoutine import classSearcher
+#from seriesRoutine import classAudioFile
+#from seriesRoutine import classImageFile
+#from seriesRoutine import classVideoFile
 import classLogger
 import classFileOperations
 import traceback
 import sys
+from seriesRoutine import classFilesList
 
 
 class SeriesRoutine:
@@ -55,37 +61,57 @@ class SeriesRoutine:
     def readFiles(self, directoryPath, sourcePath):
         langPath = classFileOperations.FileOperations.join(directoryPath, self.configuration.getValue("langPath"))
 
-        searcher = classSearcher.Searcher(self.configuration)
+        # searcher = classSearcher.Searcher(self.configuration)
+        #
+        # files = [f for f in classFileOperations.FileOperations.listdir(sourcePath) if
+        #          classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, f))]
 
-        files = [f for f in classFileOperations.FileOperations.listdir(sourcePath) if
-                 classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, f))]
+        filesList = classFilesList.FilesList(self.configuration)
 
-        videoFiles = []
-        audioFiles = []
-        subsFiles = []
-        imageFile = None
+        for file in classFileOperations.FileOperations.listdir(sourcePath):
+            if classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, file)):
+                filesList.append(classFile.File(file, sourcePath))
 
-        for folder in files:
-            if searcher.isVideoFile(folder):
-                videoFiles.append(classVideoFile.VideoFile(folder, sourcePath))
+        for vector in classFileOperations.FileOperations.walk(langPath):
+            for file in vector[2]:
+                filesList.append(classFile.File(file, vector[0]))
+
+        #audioFiles = []
+        #subsFiles = []
+        #imageFile = None
+
+        # for folder in files:
+        #     if searcher.isVideoFile(folder):
+        #         videoFiles.append(classVideoFile.VideoFile(folder, sourcePath))
+        videoFiles = filesList.filterVideoFiles()
 
         files = []
-        for vector in classFileOperations.FileOperations.walk(langPath):
-            for folder in vector[2]:
-                files.append(classFile.File(folder, vector[0]))
+        # for vector in classFileOperations.FileOperations.walk(langPath):
+        #     for folder in vector[2]:
+        #         files.append(classFile.File(folder, vector[0]))
 
-        for folder in files:
-            if searcher.isAudioFile(folder.fileName):
-                audioFiles.append(classAudioFile.AudioFile(folder.fileName, folder.path))
-            if searcher.isSubsFile(folder.fileName):
-                subsFiles.append(classSubsFile.SubsFile(folder.fileName, folder.path))
 
-        files = [f for f in classFileOperations.FileOperations.listdir(directoryPath) if
-                 classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(directoryPath, f))]
-        for file in files:
-            if searcher.isImageFile(file):
-                imageFile = classImageFile.ImageFile(file, directoryPath)
-        return videoFiles, subsFiles, audioFiles, imageFile
+
+        # for vector in classFileOperations.FileOperations.walk(langPath):
+        #     for folder in vector[2]:
+        #         files.append(classFile.File(folder, vector[0]))
+
+        audioFiles=filesList.filterAudioFiles()
+        subsFiles=filesList.filterSubsFiles()
+
+        # for folder in files:
+        #     if searcher.isAudioFile(folder.fileName):
+        #         audioFiles.append(classAudioFile.AudioFile(folder.fileName, folder.path))
+        #     if searcher.isSubsFile(folder.fileName):
+        #         subsFiles.append(classSubsFile.SubsFile(folder.fileName, folder.path))
+
+        # files = [f for f in classFileOperations.FileOperations.listdir(directoryPath) if
+        #          classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(directoryPath, f))]
+        # for file in files:
+        #     if searcher.isImageFile(file):
+        #         imageFile = classImageFile.ImageFile(file, directoryPath)
+        imageFiles=filesList.filterImageFiles()
+        return videoFiles, subsFiles, audioFiles, imageFiles[0]
 
     def analyzeFiles(self, videoFiles, subsFiles, audioFiles, imageFile):
         videoAnalyzer = classAnalyzer.Analyzer(videoFiles)
@@ -103,7 +129,7 @@ class SeriesRoutine:
 
     def logAssemble(self, directory, assemble):
         assemble.episodesList.sort(key=lambda item: item.episodeNumber)
-        #self.logger.writeLog(directory, "info", "Файлы, сгруппированные по сериям:", "w+")
+        # self.logger.writeLog(directory, "info", "Файлы, сгруппированные по сериям:", "w+")
         self.logger.writeLog(directory, "info", "Files:", "w+")
         for episode in assemble.episodesList:
             self.logger.writeLog(directory, "info", "------------------------------------")
@@ -136,19 +162,18 @@ class SeriesRoutine:
 
     def run(self):
 
-        #self.logConfigurationMain()
+        # self.logConfigurationMain()
         directoryPath, userConfugirationFile = self.findConfigurationFile(
             self.configuration.getValue("configurationFileName"))
         # print(userConfugirationFile)
         if userConfugirationFile == "":
             return 1
 
-
-
         try:
             self.loadUserConfigurationFile(
                 classFileOperations.FileOperations.join(directoryPath, userConfugirationFile))
-            self.renameUserConfigurationFile(directoryPath, userConfugirationFile)
+            if not self.configuration.getValue("isTesting"):
+                self.renameUserConfigurationFile(directoryPath, userConfugirationFile)
             sourcePath = self.getSourcePath(directoryPath)
             videoFiles, subsFiles, audioFiles, imageFile = self.readFiles(directoryPath, sourcePath)
 
