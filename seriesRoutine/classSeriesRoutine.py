@@ -75,18 +75,18 @@ class SeriesRoutine:
 
         return videoFiles, subsFiles, audioFiles, imageFiles[0]
 
-    def analyzeFiles(self, videoFiles, subsFiles, audioFiles, imageFile):
+    # def analyzeFiles(self, videoFiles, subsFiles, audioFiles, imageFile):
+    #     #
+    #     #     assemble = classAssemble.Assemble(self.configuration)
+    #     #     assemble.assemble(videoFiles, audioFiles, subsFiles, imageFile)
+    #     #
+    #     #     return assemble
 
-        assemble = classAssemble.Assemble(self.configuration)
-        assemble.assemble(videoFiles, audioFiles, subsFiles, imageFile)
-
-        return assemble
-
-    def logAssemble(self, directory, assemble):
-        assemble.episodesList.sort(key=lambda item: item.episodeNumber)
+    def logAssemble(self, directory, episodesList):
+        episodesList.sort(key=lambda item: item.episodeNumber)
         self.logger.writeLog(directory, "info", "Файлы, сгруппированные по сериям:", "w+")
         # self.logger.writeLog(directory, "info", "Files:", "w+")
-        for episode in assemble.episodesList:
+        for episode in episodesList:
             self.logger.writeLog(directory, "info", "------------------------------------")
             self.logger.writeLog(directory, "info", episode.episodeNumber + ":")
             self.logger.writeLog(directory, "info", episode.videoFile.fileName)
@@ -105,11 +105,11 @@ class SeriesRoutine:
             # print((item.key + "=" + item.value).encode("utf-8"))
         logger.writeLog(directory, "debug", "-----------------------------------")
 
-    def createLinks(self, assemble):
-        link = classLink.Link(self.configuration)
-        link.prepareFiles(assemble.episodesList)
-        link.checkTarget()
-        link.createLinks(assemble.episodesList)
+    # def createLinks(self, assemble):
+    #     link = classLink.Link(self.configuration)
+    #     link.prepareFiles(assemble.episodesList)
+    #     link.checkTarget()
+    #     link.createLinks(assemble.episodesList)
 
     def refreshPlex(self):
         plex = classPlex.Plex(self.configuration)
@@ -136,16 +136,21 @@ class SeriesRoutine:
             classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subsFiles)
             classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audioFiles)
 
-            episodesList = classFactory.Factory.createEpisodesList(videoFiles, subsFiles, audioFiles, imageFile)
-
-            assemble = classAssemble.Assemble(self.configuration)
-            # assemble.assemble(videoFiles, audioFiles, subsFiles, imageFile)
-            assemble.episodesList = episodesList
+            episodesList = classFactory.Factory.createEpisodesList(videoFiles, subsFiles, audioFiles, imageFile,
+                                                                   self.configuration)
+            print(episodesList)
+            # assemble = classAssemble.Assemble(self.configuration)
+            # # assemble.assemble(videoFiles, audioFiles, subsFiles, imageFile)
+            # assemble.episodesList = episodesList
 
             # assemble = self.analyzeFiles(videoFiles, subsFiles, audioFiles, imageFile)
-            self.logAssemble(directoryPath, assemble)
+            self.logAssemble(directoryPath, episodesList)
 
-            self.createLinks(assemble)
+            # self.createLinks(assemble)
+            link = classLink.Link(self.configuration)
+            link.prepareFiles(episodesList)
+            link.checkTarget()
+            link.createLinks(episodesList)
 
             isSuccessfull = False
             cnt = 0
