@@ -1,10 +1,10 @@
 class File:
 
     def __init__(self, fileName, path):
-        self.number = -1
+        self.number = None
         self.fileName = fileName
         self.path = path
-        self.linkFileName = ""
+        self.linkFileName = None
         self.possibleSeriesNumbers=[]
 
     def getSuffix(self):
