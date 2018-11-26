@@ -1,16 +1,11 @@
 import os
-from seriesRoutine import classAnalyzer, classConfiguration,  classLink,   \
-    classAssemble,  classFile, classPlex, classWatcher
-#from seriesRoutine import classSubsFile
-#from seriesRoutine import classSearcher
-#from seriesRoutine import classAudioFile
-#from seriesRoutine import classImageFile
-#from seriesRoutine import classVideoFile
+from seriesRoutine import classSeriesAnalyzer, classConfiguration, classLink, \
+    classAssemble, classFile, classPlex, classWatcher
 import classLogger
 import classFileOperations
 import traceback
 import sys
-from seriesRoutine import classFilesList
+from seriesRoutine import classFilesList, classFactory
 
 
 class SeriesRoutine:
@@ -71,20 +66,16 @@ class SeriesRoutine:
                 filesList.append(classFile.File(file, vector[0]))
 
         videoFiles = filesList.filterVideoFiles()
-        audioFiles=filesList.filterAudioFiles()
-        subsFiles=filesList.filterSubsFiles()
-        imageFiles=filesList.filterImageFiles()
+        audioFiles = filesList.filterAudioFiles()
+        subsFiles = filesList.filterSubsFiles()
+        imageFiles = filesList.filterImageFiles()
+
+        # for file in filesList.filesList:
+        #     print(file.fileName)
 
         return videoFiles, subsFiles, audioFiles, imageFiles[0]
 
     def analyzeFiles(self, videoFiles, subsFiles, audioFiles, imageFile):
-        videoAnalyzer = classAnalyzer.Analyzer(videoFiles)
-        audioAnalyzer = classAnalyzer.Analyzer(audioFiles)
-        subsAnalyzer = classAnalyzer.Analyzer(subsFiles)
-
-        videoAnalyzer.setFileNumber()
-        audioAnalyzer.setFileNumber()
-        subsAnalyzer.setFileNumber()
 
         assemble = classAssemble.Assemble(self.configuration)
         assemble.assemble(videoFiles, audioFiles, subsFiles, imageFile)
@@ -94,7 +85,7 @@ class SeriesRoutine:
     def logAssemble(self, directory, assemble):
         assemble.episodesList.sort(key=lambda item: item.episodeNumber)
         self.logger.writeLog(directory, "info", "Файлы, сгруппированные по сериям:", "w+")
-        #self.logger.writeLog(directory, "info", "Files:", "w+")
+        # self.logger.writeLog(directory, "info", "Files:", "w+")
         for episode in assemble.episodesList:
             self.logger.writeLog(directory, "info", "------------------------------------")
             self.logger.writeLog(directory, "info", episode.episodeNumber + ":")
@@ -141,7 +132,17 @@ class SeriesRoutine:
             sourcePath = self.getSourcePath(directoryPath)
             videoFiles, subsFiles, audioFiles, imageFile = self.readFiles(directoryPath, sourcePath)
 
-            assemble = self.analyzeFiles(videoFiles, subsFiles, audioFiles, imageFile)
+            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(videoFiles)
+            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subsFiles)
+            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audioFiles)
+
+            episodesList = classFactory.Factory.createEpisodesList(videoFiles, subsFiles, audioFiles, imageFile)
+
+            assemble = classAssemble.Assemble(self.configuration)
+            # assemble.assemble(videoFiles, audioFiles, subsFiles, imageFile)
+            assemble.episodesList = episodesList
+
+            # assemble = self.analyzeFiles(videoFiles, subsFiles, audioFiles, imageFile)
             self.logAssemble(directoryPath, assemble)
 
             self.createLinks(assemble)
