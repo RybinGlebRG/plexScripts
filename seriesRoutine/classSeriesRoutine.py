@@ -1,6 +1,6 @@
 import os
 from seriesRoutine import classSeriesAnalyzer, classConfiguration, classLink, \
-    classAssemble, classFile, classPlex, classWatcher
+    classPlex, classWatcher
 import classLogger
 import classFileOperations
 import traceback
@@ -59,11 +59,11 @@ class SeriesRoutine:
 
         for file in classFileOperations.FileOperations.listdir(sourcePath):
             if classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, file)):
-                filesList.append(classFile.File(file, sourcePath))
+                filesList.append(classFactory.Factory.createFile(file, sourcePath))
 
         for vector in classFileOperations.FileOperations.walk(langPath):
             for file in vector[2]:
-                filesList.append(classFile.File(file, vector[0]))
+                filesList.append(classFactory.Factory.createFile(file, vector[0]))
 
         videoFiles = filesList.filterVideoFiles()
         audioFiles = filesList.filterAudioFiles()
@@ -118,9 +118,11 @@ class SeriesRoutine:
     def run(self):
 
         # self.logConfigurationMain()
-        directoryPath, userConfugirationFile = self.findConfigurationFile(
-            self.configuration.getValue("configurationFileName"))
+        # directoryPath, userConfugirationFile = self.findConfigurationFile(
+        #     self.configuration.getValue("configurationFileName"))
         # print(userConfugirationFile)
+        directoryPath, userConfugirationFile = classConfiguration.Configuration.findUserConfigurationFile(
+            self.configuration.getValue("watcherPath"), self.configuration.getValue("configurationFileName"))
         if userConfugirationFile == "":
             return 1
 
@@ -138,12 +140,7 @@ class SeriesRoutine:
 
             episodesList = classFactory.Factory.createEpisodesList(videoFiles, subsFiles, audioFiles, imageFile,
                                                                    self.configuration)
-            print(episodesList)
-            # assemble = classAssemble.Assemble(self.configuration)
-            # # assemble.assemble(videoFiles, audioFiles, subsFiles, imageFile)
-            # assemble.episodesList = episodesList
 
-            # assemble = self.analyzeFiles(videoFiles, subsFiles, audioFiles, imageFile)
             self.logAssemble(directoryPath, episodesList)
 
             # self.createLinks(assemble)
@@ -172,4 +169,3 @@ class SeriesRoutine:
         # TODO: Добавление файлов поодиночке
         # TODO: Файлы, имя которых отличается не только номером серии
         # TODO: Watcher должен работать с несколькими файлами, а не только одним
-        # TODO: Исправить работу с серией номер ноль

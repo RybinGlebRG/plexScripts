@@ -141,3 +141,21 @@ class Configuration:
             item = classKeyValue.KeyValue(pair.key, temp)
             items.append(item)
         return items
+
+    @staticmethod
+    def findUserConfigurationFile(directory, fileName):
+        foundDirectory = ""
+        foundFile = ""
+        for root, dirs, files in classFileOperations.FileOperations.walk(directory):
+            #print(files)
+            for file in files:
+                #print(classFileOperations.FileOperations.join(root, file))
+                #print(classFileOperations.FileOperations.join(root, fileName))
+                #print(file)
+                #print(fileName)
+                if file == fileName:
+                    #print("LOL")
+                    foundDirectory = root
+                    foundFile = file
+                    break
+        return foundDirectory, foundFile
