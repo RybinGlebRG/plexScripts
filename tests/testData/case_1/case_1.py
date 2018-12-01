@@ -4,7 +4,7 @@ import sys
 import classFileOperations
 
 
-def prepareTestData(configuration):
+def prepare_test_configuration(configuration):
     configuration.addTestData("videoFileSuffixes", "mkv")
     configuration.addTestData("audioFileSuffixes", "ac3")
     configuration.addTestData("subsFileSuffixes", "ass")
@@ -31,12 +31,15 @@ def prepareTestData(configuration):
     configuration.addTestData("directoryPath", path)
 
 
+def prepare_test_video_files(video_files):
+    pass
+
+
 def run():
     prepare.prepare()
 
     configuration = classFactory.Factory.createConfiguration(sys.argv[1])
-    # model = createConfigurationModel()
-    prepareTestData(configuration)
+    prepare_test_configuration(configuration)
     configuration.test()
 
     directoryPath = configuration.getValue("directoryPath")
