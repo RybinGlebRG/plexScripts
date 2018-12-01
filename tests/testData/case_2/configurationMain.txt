@@ -1,0 +1,14 @@
+﻿videoFileSuffixes=mkv
+audioFileSuffixes=ac3
+subsFileSuffixes=ass
+imageFileSuffixes=jpg
+linkAudio=A
+linkSubs=A
+langPath=Lang
+sourcePossibleLocation=merged
+directoryPathArgumentNumber=1
+watcherPath=
+configurationFileName=configuration.ready
+configurationFileNameUsed=configuration.txt
+forbiddenSymbols=\; /; *; ?; "; <; >; |
+wrongOSNames=nt

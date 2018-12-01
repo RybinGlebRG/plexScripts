@@ -1,0 +1,4 @@
+seasonNumber=1
+titleName=Some
+addFile=
+addFileNumber=

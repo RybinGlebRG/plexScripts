@@ -1,12 +1,44 @@
-from seriesRoutine import classFactory, classSeriesAnalyzer
+from seriesRoutine import classFactory, classSeriesAnalyzer, classKeyValue
 from tests.testData.case_1 import check, prepare
 import sys
+import classFileOperations
+
+
+def prepareTestData(configuration):
+    configuration.addTestData("videoFileSuffixes", "mkv")
+    configuration.addTestData("audioFileSuffixes", "ac3")
+    configuration.addTestData("subsFileSuffixes", "ass")
+    configuration.addTestData("imageFileSuffixes", "jpg")
+    configuration.addTestData("linkAudio", "A")
+    configuration.addTestData("linkSubs", "A")
+    configuration.addTestData("langPath", "Lang")
+    configuration.addTestData("sourcePossibleLocation", "merged")
+    configuration.addTestData("directoryPathArgumentNumber", "1")
+    path = classFileOperations.FileOperations.abspath(sys.argv[0])
+    ldir = classFileOperations.FileOperations.dirname(path)
+    configuration.addTestData("watcherPath", ldir)
+    configuration.addTestData("configurationFileName", "configuration.ready")
+    configuration.addTestData("configurationFileNameUsed", "configuration.txt")
+    configuration.addTestData("forbiddenSymbols", list('\/*?"<>|'))
+    configuration.addTestData("wrongOSNames", "nt")
+    configuration.addTestData("seasonNumber", "01")
+    configuration.addTestData("titleName", "Some")
+    path = classFileOperations.FileOperations.abspath(sys.argv[0])
+    path = classFileOperations.FileOperations.dirname(path)
+    path = classFileOperations.FileOperations.join(path, "testData")
+    path = classFileOperations.FileOperations.join(path, "case_1")
+    path = classFileOperations.FileOperations.join(path, "Some serial")
+    configuration.addTestData("directoryPath", path)
 
 
 def run():
     prepare.prepare()
 
     configuration = classFactory.Factory.createConfiguration(sys.argv[1])
+    # model = createConfigurationModel()
+    prepareTestData(configuration)
+    configuration.test()
+
     directoryPath = configuration.getValue("directoryPath")
     filesList = classFactory.Factory.createFilesList(directoryPath, configuration)
 

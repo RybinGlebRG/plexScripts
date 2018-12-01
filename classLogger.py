@@ -15,4 +15,4 @@ class Logger:
         # file.close()
         classFileOperations.FileOperations.writeLineToFile(
             classFileOperations.FileOperations.join(directory, level + "_log.txt"), string, mode)
-        print(string)
+        #print(string)

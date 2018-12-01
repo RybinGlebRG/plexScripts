@@ -9,6 +9,7 @@ class Configuration:
 
     def __init__(self):
         self.keyValueList = []
+        self.test_data = []
         # self.keyValueList.append(classKeyValue.KeyValue("videoFileSuffixes", ["mkv"]))
         # self.keyValueList.append(classKeyValue.KeyValue("audioFileSuffixes", ["ac3"]))
         # self.keyValueList.append(classKeyValue.KeyValue("subsFileSuffixes", ["ass"]))
@@ -150,12 +151,12 @@ class Configuration:
         foundDirectory = ""
         foundFile = ""
         for root, dirs, files in classFileOperations.FileOperations.walk(directory):
-            #print(files)
+            # print(files)
             for file in files:
-                #print(classFileOperations.FileOperations.join(root, file))
-                #print(classFileOperations.FileOperations.join(root, fileName))
-                #print(file)
-                #print(fileName)
+                # print(classFileOperations.FileOperations.join(root, file))
+                # print(classFileOperations.FileOperations.join(root, fileName))
+                # print(file)
+                # print(fileName)
                 if file == fileName:
                     # print("LOL")
                     foundDirectory = root
@@ -166,5 +167,63 @@ class Configuration:
     def checkWatcherPath(self):
         if self.getValue("watcherPath") is None:
             path = classFileOperations.FileOperations.abspath(sys.argv[0])
-            dir = classFileOperations.FileOperations.dirname(path)
-            self.setValue("watcherPath", dir)
+            ldir = classFileOperations.FileOperations.dirname(path)
+            self.setValue("watcherPath", ldir)
+
+    def addTestData(self, key, value=""):
+        self.test_data.append(classKeyValue.KeyValue(key, value))
+
+    def test(self):
+        print("Configuration:")
+        passed = True
+        for pair in self.test_data:
+            # print("------------------------------")
+            # print(repr(pair.key))
+            # print("")
+            keyExist = True
+            valueOK = True
+            for item in self.keyValueList:
+                # print(repr(item.key))
+                # print(pair.key==item.key)
+                if item.key == pair.key:
+                    # print(item.key+" = "+str(item.value))
+                    # print(pair.key+" = "+str(pair.value))
+                    # print("---------------------------------")
+                    # keyExist = True
+                    if isinstance(pair.value, list):
+                        if len(pair.value) != len(item.value):
+                            valueOK = False
+                        else:
+                            valueOK = valueOK and True
+                        for i in range(0, len(pair.value)):
+                            if pair.value[i] != item.value[i]:
+                                valueOK = False
+                                break
+                            else:
+                                valueOK = valueOK and True
+
+                    else:
+                        if item.value == pair.value:
+                            valueOK = True
+            if not keyExist or not valueOK:
+                print(pair.key)
+                passed = False
+                # return False
+        fileOld = None
+        fileNew = None
+        for item in self.keyValueList:
+            if item.key == "directoryPath":
+                fileOld = classFileOperations.FileOperations.join(item.value, "configuration.ready")
+                fileNew = classFileOperations.FileOperations.join(item.value, "configuration.txt")
+        if classFileOperations.FileOperations.exists(fileOld):
+            passed = False
+            # return False
+        if not classFileOperations.FileOperations.exists(fileNew):
+            passed = False
+            # return False
+        self.test_data = []
+        if not passed:
+            print("Failed")
+            return None
+        else:
+            print("Passed")
