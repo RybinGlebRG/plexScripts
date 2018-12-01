@@ -1,0 +1,2 @@
+seasonNumber=1
+titleName=Some
