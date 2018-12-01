@@ -101,6 +101,8 @@ class SeriesRoutine:
             # if not self.configuration.getValue("isTesting"):
             #     self.renameUserConfigurationFile(directoryPath, userConfugirationFile)
             self.configuration = classFactory.Factory.createConfiguration(sys.argv[1])
+            if self.configuration is None:
+                return None
             directoryPath = self.configuration.getValue("directoryPath")
             #sourcePath = self.getSourcePath(directoryPath)
 
