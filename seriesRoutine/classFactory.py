@@ -1,4 +1,5 @@
-from seriesRoutine import classFile, classEpisode
+from seriesRoutine import classFile, classEpisode, classConfiguration, classFilesList
+import classFileOperations
 
 
 class Factory:
@@ -58,3 +59,57 @@ class Factory:
             episodesList.append(
                 Factory.createEpisode(videoFile, suitableSubsFiles, suitableAudioFiles, Factory.copyFile(imageFile)))
         return episodesList
+
+    @staticmethod
+    def createConfiguration(absoluteFileName):
+        configuration = classConfiguration.Configuration()
+        configuration.load(absoluteFileName)
+        configuration.checkWatcherPath()
+        #print(configuration.getValue("watcherPath"))
+        directoryPath, userConfugirationFile = classConfiguration.Configuration.findUserConfigurationFile(
+            configuration.getValue("watcherPath"), configuration.getValue("configurationFileName"))
+        if userConfugirationFile == "":
+            return None
+        configuration.createKey("directoryPath", directoryPath)
+        configuration.load(classFileOperations.FileOperations.join(directoryPath, userConfugirationFile))
+        configuration.deleteForbiddenSymbolsFromValue("titleName")
+        configuration.formatSeasonNumber()
+
+        classFileOperations.FileOperations.rename(
+            classFileOperations.FileOperations.join(directoryPath,
+                                                    classFileOperations.FileOperations.join(directoryPath,
+                                                                                            userConfugirationFile)),
+            classFileOperations.FileOperations.join(directoryPath,
+                                                    configuration.getValue("configurationFileNameUsed")))
+        return configuration
+
+    @staticmethod
+    def createFilesList(directoryPath, configuration):
+        def getSourcePath(directoryPath, configuration):
+            folders = []
+            for folderList in classFileOperations.FileOperations.walk(directoryPath):
+                folders = folderList[1]
+                break
+            sourcePath = directoryPath
+            for folder in folders:
+                if configuration.isIncludes("sourcePossibleLocation", folder):
+                    sourcePath = classFileOperations.FileOperations.join(directoryPath, folder)
+                    if configuration.getValue("linkAudio") == "A":
+                        configuration.setValue("linkAudio", "N")
+                    if configuration.getValue("linkSubs") == "A":
+                        configuration.setValue("linkSubs", "N")
+                    break
+            return sourcePath
+
+        langPath = classFileOperations.FileOperations.join(directoryPath, configuration.getValue("langPath"))
+        filesList = classFilesList.FilesList(configuration)
+        sourcePath = getSourcePath(directoryPath, configuration)
+
+        for file in classFileOperations.FileOperations.listdir(sourcePath):
+            if classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, file)):
+                filesList.append(Factory.createFile(file, sourcePath, configuration))
+
+        for vector in classFileOperations.FileOperations.walk(langPath):
+            for file in vector[2]:
+                filesList.append(Factory.createFile(file, vector[0], configuration))
+        return filesList

@@ -2,6 +2,7 @@ from seriesRoutine import classKeyValue
 import io
 import classFileOperations
 import classLogger
+import sys
 
 
 class Configuration:
@@ -45,7 +46,7 @@ class Configuration:
                     foundDelimeter = True
                     break
             if not foundDelimeter:
-                key = ""
+                key = None
             return key.strip()
 
         def getValueFromString(line):
@@ -56,7 +57,7 @@ class Configuration:
                 else:
                     return True
 
-            value = ""
+            value = None
             delimiter = line.find("=")
 
             if delimiter != -1:
@@ -68,10 +69,12 @@ class Configuration:
                     value = value.split(";")
                     for i in range(0, len(value)):
                         value[i] = value[i].strip()
+                if len(value) == 0:
+                    value = None
             return value
 
         # lines = [line   .strip() for line in open(fileName)]
-        lines = []
+        # lines = []
         # for line in io.open(fileName,encoding="utf-8"):
         # for line in classFileOperations.FileOperations.open(fileName):
         #     lines.append(line)
@@ -79,9 +82,9 @@ class Configuration:
         lines = classFileOperations.FileOperations.readFile(fileName)
 
         for line in lines:
-            #print(line)
+            # print(line)
             if line[0] != "#":
-                if getKeyFromString(line) != "":
+                if getKeyFromString(line) is not None:
                     if self.isKeyExists(getKeyFromString(line)):
                         # print(getValueFromString(line))
                         self.setValue(getKeyFromString(line), getValueFromString(line))
@@ -154,8 +157,14 @@ class Configuration:
                 #print(file)
                 #print(fileName)
                 if file == fileName:
-                    #print("LOL")
+                    # print("LOL")
                     foundDirectory = root
                     foundFile = file
                     break
         return foundDirectory, foundFile
+
+    def checkWatcherPath(self):
+        if self.getValue("watcherPath") is None:
+            path = classFileOperations.FileOperations.abspath(sys.argv[0])
+            dir = classFileOperations.FileOperations.dirname(path)
+            self.setValue("watcherPath", dir)

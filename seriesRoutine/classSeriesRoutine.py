@@ -11,56 +11,55 @@ from seriesRoutine import classFilesList, classFactory
 class SeriesRoutine:
 
     def __init__(self):
-        self.configuration = classConfiguration.Configuration()
-        self.configuration.load(sys.argv[1])
+        self.configuration = None
         self.logger = classLogger.Logger()
         self.directoryPath = ""
 
-    def loadUserConfigurationFile(self, userConfigurationFileName):
-        self.configuration.load(userConfigurationFileName)
-        self.configuration.deleteForbiddenSymbolsFromValue("titleName")
-        self.configuration.formatSeasonNumber()
+    # def loadUserConfigurationFile(self, userConfigurationFileName):
+    #     self.configuration.load(userConfigurationFileName)
+    #     self.configuration.deleteForbiddenSymbolsFromValue("titleName")
+    #     self.configuration.formatSeasonNumber()
 
-    def renameUserConfigurationFile(self, directoryPath, userConfigurationFileName):
-        classFileOperations.FileOperations.rename(
-            classFileOperations.FileOperations.join(directoryPath, userConfigurationFileName),
-            classFileOperations.FileOperations.join(directoryPath,
-                                                    self.configuration.getValue("configurationFileNameUsed")))
+    # def renameUserConfigurationFile(self, directoryPath, userConfigurationFileName):
+    #     classFileOperations.FileOperations.rename(
+    #         classFileOperations.FileOperations.join(directoryPath, userConfigurationFileName),
+    #         classFileOperations.FileOperations.join(directoryPath,
+    #                                                 self.configuration.getValue("configurationFileNameUsed")))
 
-    def getSourcePath(self, directoryPath):
-        folders = []
-        for folderList in classFileOperations.FileOperations.walk(directoryPath):
-            folders = folderList[1]
-            break
-        sourcePath = directoryPath
-        for folder in folders:
-            if self.configuration.isIncludes("sourcePossibleLocation", folder):
-                sourcePath = classFileOperations.FileOperations.join(directoryPath, folder)
-                if self.configuration.getValue("linkAudio") == "A":
-                    self.configuration.setValue("linkAudio", "N")
-                if self.configuration.getValue("linkSubs") == "A":
-                    self.configuration.setValue("linkSubs", "N")
-                break
-        return sourcePath
+    # def getSourcePath(self, directoryPath):
+    #     folders = []
+    #     for folderList in classFileOperations.FileOperations.walk(directoryPath):
+    #         folders = folderList[1]
+    #         break
+    #     sourcePath = directoryPath
+    #     for folder in folders:
+    #         if self.configuration.isIncludes("sourcePossibleLocation", folder):
+    #             sourcePath = classFileOperations.FileOperations.join(directoryPath, folder)
+    #             if self.configuration.getValue("linkAudio") == "A":
+    #                 self.configuration.setValue("linkAudio", "N")
+    #             if self.configuration.getValue("linkSubs") == "A":
+    #                 self.configuration.setValue("linkSubs", "N")
+    #             break
+    #     return sourcePath
 
-    def readFiles(self, directoryPath, sourcePath):
-        langPath = classFileOperations.FileOperations.join(directoryPath, self.configuration.getValue("langPath"))
-        filesList = classFilesList.FilesList(self.configuration)
-
-        for file in classFileOperations.FileOperations.listdir(sourcePath):
-            if classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, file)):
-                filesList.append(classFactory.Factory.createFile(file, sourcePath, self.configuration))
-
-        for vector in classFileOperations.FileOperations.walk(langPath):
-            for file in vector[2]:
-                filesList.append(classFactory.Factory.createFile(file, vector[0], self.configuration))
-
-        videoFiles = filesList.filterVideoFiles()
-        audioFiles = filesList.filterAudioFiles()
-        subsFiles = filesList.filterSubsFiles()
-        imageFiles = filesList.filterImageFiles()
-
-        return videoFiles, subsFiles, audioFiles, imageFiles[0]
+    # def readFiles(self, directoryPath, sourcePath):
+    #     langPath = classFileOperations.FileOperations.join(directoryPath, self.configuration.getValue("langPath"))
+    #     filesList = classFilesList.FilesList(self.configuration)
+    #
+    #     for file in classFileOperations.FileOperations.listdir(sourcePath):
+    #         if classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, file)):
+    #             filesList.append(classFactory.Factory.createFile(file, sourcePath, self.configuration))
+    #
+    #     for vector in classFileOperations.FileOperations.walk(langPath):
+    #         for file in vector[2]:
+    #             filesList.append(classFactory.Factory.createFile(file, vector[0], self.configuration))
+    #
+    #     videoFiles = filesList.filterVideoFiles()
+    #     audioFiles = filesList.filterAudioFiles()
+    #     subsFiles = filesList.filterSubsFiles()
+    #     imageFiles = filesList.filterImageFiles()
+    #
+    #     return videoFiles, subsFiles, audioFiles, imageFiles[0]
 
     def logAssemble(self, directory, episodesList):
         episodesList.sort(key=lambda item: item.episodeNumber)
@@ -88,18 +87,31 @@ class SeriesRoutine:
         plex.refershLibrary(self.configuration.getValue("plexLibrary"))
 
     def run(self):
-        directoryPath, userConfugirationFile = classConfiguration.Configuration.findUserConfigurationFile(
-            self.configuration.getValue("watcherPath"), self.configuration.getValue("configurationFileName"))
-        if userConfugirationFile == "":
-            return 1
+        # self.configuration = classConfiguration.Configuration()
+        # self.configuration.load(sys.argv[1])
+
+        # directoryPath, userConfugirationFile = classConfiguration.Configuration.findUserConfigurationFile(
+        #     self.configuration.getValue("watcherPath"), self.configuration.getValue("configurationFileName"))
+        # if userConfugirationFile == "":
+        #     return 1
 
         try:
-            self.loadUserConfigurationFile(
-                classFileOperations.FileOperations.join(directoryPath, userConfugirationFile))
-            if not self.configuration.getValue("isTesting"):
-                self.renameUserConfigurationFile(directoryPath, userConfugirationFile)
-            sourcePath = self.getSourcePath(directoryPath)
-            videoFiles, subsFiles, audioFiles, imageFile = self.readFiles(directoryPath, sourcePath)
+            # self.loadUserConfigurationFile(
+            #     classFileOperations.FileOperations.join(directoryPath, userConfugirationFile))
+            # if not self.configuration.getValue("isTesting"):
+            #     self.renameUserConfigurationFile(directoryPath, userConfugirationFile)
+            self.configuration = classFactory.Factory.createConfiguration(sys.argv[1])
+            directoryPath = self.configuration.getValue("directoryPath")
+            #sourcePath = self.getSourcePath(directoryPath)
+
+            filesList = classFactory.Factory.createFilesList(directoryPath, self.configuration)
+
+            videoFiles = filesList.filterVideoFiles()
+            audioFiles = filesList.filterAudioFiles()
+            subsFiles = filesList.filterSubsFiles()
+            imageFile = filesList.filterImageFiles()[0]
+
+            # videoFiles, subsFiles, audioFiles, imageFile = self.readFiles(directoryPath, sourcePath)
 
             classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(videoFiles)
             classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subsFiles)
@@ -129,7 +141,7 @@ class SeriesRoutine:
 
         except Exception as e:
             logger = classLogger.Logger()
-            logger.writeLog(directoryPath, "error", str(e))
+            logger.writeLog(self.configuration.getValue("directoryPath"), "error", str(e))
             traceback.print_exc()
 
         # TODO: Добавление файлов поодиночке
