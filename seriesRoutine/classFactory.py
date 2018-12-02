@@ -15,7 +15,11 @@ class Factory:
                 addFiles = configuration.getValueAsList("addFile")
                 for i in range(0, len(addFiles)):
                     if addFiles[i] == file.fileName:
-                        file.number = configuration.getValueAsList("addFileNumber")[i]
+                        file.number = configuration.getValueAsList("addFileNumber")[i].lstrip("")
+                        if file.number == "":
+                            file.number = 0
+                        else:
+                            file.number = int(file.number)
 
     @staticmethod
     def createFile(fileName, path, configuration=None):
@@ -65,7 +69,7 @@ class Factory:
         configuration = classConfiguration.Configuration()
         configuration.load(absoluteFileName)
         configuration.checkWatcherPath()
-        #print(configuration.getValue("watcherPath"))
+        # print(configuration.getValue("watcherPath"))
         directoryPath, userConfugirationFile = classConfiguration.Configuration.findUserConfigurationFile(
             configuration.getValue("watcherPath"), configuration.getValue("configurationFileName"))
         if userConfugirationFile == "":
@@ -84,7 +88,7 @@ class Factory:
         return configuration
 
     @staticmethod
-    def createFilesList(directoryPath, configuration):
+    def createFilesList(directoryPath, configuration, list=None):
         def getSourcePath(directoryPath, configuration):
             folders = []
             for folderList in classFileOperations.FileOperations.walk(directoryPath):
@@ -107,9 +111,9 @@ class Factory:
 
         for file in classFileOperations.FileOperations.listdir(sourcePath):
             if classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, file)):
-                filesList.append(Factory.createFile(file, sourcePath, configuration))
+                filesList.add(Factory.createFile(file, sourcePath, configuration))
 
         for vector in classFileOperations.FileOperations.walk(langPath):
             for file in vector[2]:
-                filesList.append(Factory.createFile(file, vector[0], configuration))
+                filesList.add(Factory.createFile(file, vector[0], configuration))
         return filesList

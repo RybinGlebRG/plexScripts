@@ -19,25 +19,35 @@ class Link:
                 cnt = "." + cnt
             return cnt
 
+        max_num = 0
+        for item in episodesList:
+            if item.episodeNumber > max_num:
+                max_num = item.episodeNumber
+        max_num = len(str(max_num))
+
         seasonNumber = self.configuration.getValue("seasonNumber")
         # if int(seasonNumber) < 10:
         #     seasonNumber = "0" + seasonNumber
         titleName = self.configuration.getValue("titleName")
         for episode in episodesList:
-            episode.videoFile.linkFileName = titleName + " - s" + seasonNumber + "e" + episode.episodeNumber + \
+            episode.videoFile.linkFileName = titleName + " - s" + seasonNumber + "e" + (
+                str(episode.episodeNumber)).zfill(max_num) + \
                                              "." + episode.videoFile.getSuffix()
-            episode.imageFile.linkFileName = titleName + " - s" + seasonNumber + "e" + episode.episodeNumber + \
+            episode.imageFile.linkFileName = titleName + " - s" + seasonNumber + "e" + (
+                str(episode.episodeNumber)).zfill(max_num) + \
                                              "." + episode.imageFile.getSuffix()
             # print(episode.videoFile.linkFileName)
             # print(episode.imageFile.linkFileName)
             counter = ""
             for item in episode.audioFiles:
-                item.linkFileName = titleName + " - s" + seasonNumber + "e" + episode.episodeNumber + counter + "." + item.getSuffix()
+                item.linkFileName = titleName + " - s" + seasonNumber + "e" + (str(
+                    episode.episodeNumber)).zfill(max_num) + counter + "." + item.getSuffix()
                 counter = incrementCounter(counter)
             counter = ""
             for item in episode.subsFiles:
                 # print(counter)
-                item.linkFileName = titleName + " - s" + seasonNumber + "e" + episode.episodeNumber + counter + "." + item.getSuffix()
+                item.linkFileName = titleName + " - s" + seasonNumber + "e" + (str(
+                    episode.episodeNumber)).zfill(max_num) + counter + "." + item.getSuffix()
                 counter = incrementCounter(counter)
 
     def checkTarget(self):
@@ -71,7 +81,7 @@ class Link:
 
     def createLinks(self, episodesList):
         if not self.configuration.isIncludes("wrongOSNames", classFileOperations.FileOperations.osName()):
-            #print("LOL")
+            # print("LOL")
             targetPath = self.configuration.getValue("targetPath")
             titleName = self.configuration.getValue("titleName")
             seasonNumber = self.configuration.getValue("seasonNumber")

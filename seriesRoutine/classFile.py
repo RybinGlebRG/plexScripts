@@ -5,7 +5,7 @@ class File:
         self.fileName = fileName
         self.path = path
         self.linkFileName = None
-        self.possibleSeriesNumbers=[]
+        self.possibleSeriesNumbers = []
 
     def getSuffix(self):
         lastDot = self.fileName.rfind(".")
