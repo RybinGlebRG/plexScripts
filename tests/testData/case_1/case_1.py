@@ -58,3 +58,6 @@ def run():
                                                            configuration)
     result = check.check(episodesList)
     return result
+
+def get_model_list():
+    pass
