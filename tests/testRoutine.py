@@ -38,7 +38,7 @@ def run():
     episodesList = classFactory.Factory.createEpisodesList(videoFiles.get_list(), subsFiles.get_list(),
                                                            audioFiles.get_list(), imageFiles.get_list()[0],
                                                            configuration)
-    result = check(episodesList, case_1.get_model_list())
+    result = check(episodesList.episodes_list, case_1.get_model_list())
     print(result)
 
 

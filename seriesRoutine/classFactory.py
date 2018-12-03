@@ -1,4 +1,4 @@
-from seriesRoutine import classFile, classEpisode, classConfiguration, classFilesList
+from seriesRoutine import classFile, classEpisode, classConfiguration, classFilesList, ClassEpisodesList
 import classFileOperations
 
 
@@ -64,7 +64,9 @@ class Factory:
             image_file_copy.number = videoFile.number
             episodesList.append(
                 Factory.createEpisode(videoFile, suitableSubsFiles, suitableAudioFiles, image_file_copy))
-        return episodesList
+        episodes_list=ClassEpisodesList.EpisodesList()
+        episodes_list.episodes_list=episodesList
+        return episodes_list
 
     @staticmethod
     def createConfiguration(absoluteFileName):

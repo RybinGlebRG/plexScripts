@@ -10,13 +10,6 @@ class Configuration:
     def __init__(self):
         self.keyValueList = []
         self.test_data = []
-        # self.keyValueList.append(classKeyValue.KeyValue("videoFileSuffixes", ["mkv"]))
-        # self.keyValueList.append(classKeyValue.KeyValue("audioFileSuffixes", ["ac3"]))
-        # self.keyValueList.append(classKeyValue.KeyValue("subsFileSuffixes", ["ass"]))
-        # self.keyValueList.append(classKeyValue.KeyValue("titleName"))
-        # self.keyValueList.append(classKeyValue.KeyValue("seasonNumber"))
-        # self.keyValueList.append(classKeyValue.KeyValue("sourcePath"))
-        # self.keyValueList.append(classKeyValue.KeyValue("targetPath"))
 
     def createKey(self, key, value=""):
         self.keyValueList.append(classKeyValue.KeyValue(key, value))
@@ -174,7 +167,6 @@ class Configuration:
         self.test_data.append(classKeyValue.KeyValue(key, value))
 
     def test(self):
-        print("Configuration:")
         passed = True
         for pair in self.test_data:
             # print("------------------------------")
@@ -222,8 +214,13 @@ class Configuration:
             passed = False
             # return False
         self.test_data = []
-        if not passed:
-            print("Failed")
-            return None
-        else:
-            print("Passed")
+        return passed
+
+    def log(self):
+        logger = classLogger.Logger()
+        directory = classFileOperations.FileOperations.dirname(classFileOperations.FileOperations.abspath(__file__))
+        logger.writeLog(directory, "debug", "configurationMain:", "w+")
+        items = self.getAllPairs()
+        for item in items:
+            logger.writeLog(directory, "debug", item.key + "=" + item.value)
+        logger.writeLog(directory, "debug", "-----------------------------------")

@@ -1,6 +1,6 @@
 import os
 from seriesRoutine import classSeriesAnalyzer, classConfiguration, classLink, \
-    classPlex
+    classPlex, ClassEpisodesList
 import classLogger
 import classFileOperations
 import traceback
@@ -11,135 +11,74 @@ from seriesRoutine import classFilesList, classFactory
 class SeriesRoutine:
 
     def __init__(self):
-        self.configuration = None
-        self.logger = classLogger.Logger()
-        self.directoryPath = ""
+        pass
+        #self.configuration = None
+        # self.log_path=None
+        # self.logger = classLogger.Logger()
+        # self.directoryPath = ""
 
-    # def loadUserConfigurationFile(self, userConfigurationFileName):
-    #     self.configuration.load(userConfigurationFileName)
-    #     self.configuration.deleteForbiddenSymbolsFromValue("titleName")
-    #     self.configuration.formatSeasonNumber()
+    # def logAssemble(self, directory, episodesList):
+    #     episodesList.sort(key=lambda item: item.episodeNumber)
+    #     self.logger.writeLog(directory, "info", "Файлы, сгруппированные по сериям:", "w+")
+    #     for episode in episodesList:
+    #         self.logger.writeLog(directory, "info", "------------------------------------")
+    #         self.logger.writeLog(directory, "info", str(episode.episodeNumber) + ":")
+    #         self.logger.writeLog(directory, "info", episode.videoFile.fileName)
+    #         for audioFile in episode.audioFiles:
+    #             self.logger.writeLog(directory, "info", audioFile.fileName)
+    #         for subsFile in episode.subsFiles:
+    #             self.logger.writeLog(directory, "info", subsFile.fileName)
 
-    # def renameUserConfigurationFile(self, directoryPath, userConfigurationFileName):
-    #     classFileOperations.FileOperations.rename(
-    #         classFileOperations.FileOperations.join(directoryPath, userConfigurationFileName),
-    #         classFileOperations.FileOperations.join(directoryPath,
-    #                                                 self.configuration.getValue("configurationFileNameUsed")))
+    # def logConfigurationMain(self):
+    #     logger = classLogger.Logger()
+    #     directory = classFileOperations.FileOperations.dirname(classFileOperations.FileOperations.abspath(__file__))
+    #     logger.writeLog(directory, "debug", "configurationMain:", "w+")
+    #     items = self.configuration.getAllPairs()
+    #     for item in items:
+    #         logger.writeLog(directory, "debug", item.key + "=" + item.value)
+    #     logger.writeLog(directory, "debug", "-----------------------------------")
 
-    # def getSourcePath(self, directoryPath):
-    #     folders = []
-    #     for folderList in classFileOperations.FileOperations.walk(directoryPath):
-    #         folders = folderList[1]
-    #         break
-    #     sourcePath = directoryPath
-    #     for folder in folders:
-    #         if self.configuration.isIncludes("sourcePossibleLocation", folder):
-    #             sourcePath = classFileOperations.FileOperations.join(directoryPath, folder)
-    #             if self.configuration.getValue("linkAudio") == "A":
-    #                 self.configuration.setValue("linkAudio", "N")
-    #             if self.configuration.getValue("linkSubs") == "A":
-    #                 self.configuration.setValue("linkSubs", "N")
-    #             break
-    #     return sourcePath
-
-    # def readFiles(self, directoryPath, sourcePath):
-    #     langPath = classFileOperations.FileOperations.join(directoryPath, self.configuration.getValue("langPath"))
-    #     filesList = classFilesList.FilesList(self.configuration)
-    #
-    #     for file in classFileOperations.FileOperations.listdir(sourcePath):
-    #         if classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, file)):
-    #             filesList.append(classFactory.Factory.createFile(file, sourcePath, self.configuration))
-    #
-    #     for vector in classFileOperations.FileOperations.walk(langPath):
-    #         for file in vector[2]:
-    #             filesList.append(classFactory.Factory.createFile(file, vector[0], self.configuration))
-    #
-    #     videoFiles = filesList.filterVideoFiles()
-    #     audioFiles = filesList.filterAudioFiles()
-    #     subsFiles = filesList.filterSubsFiles()
-    #     imageFiles = filesList.filterImageFiles()
-    #
-    #     return videoFiles, subsFiles, audioFiles, imageFiles[0]
-
-    def logAssemble(self, directory, episodesList):
-        episodesList.sort(key=lambda item: item.episodeNumber)
-        self.logger.writeLog(directory, "info", "Файлы, сгруппированные по сериям:", "w+")
-        for episode in episodesList:
-            self.logger.writeLog(directory, "info", "------------------------------------")
-            self.logger.writeLog(directory, "info", str(episode.episodeNumber) + ":")
-            self.logger.writeLog(directory, "info", episode.videoFile.fileName)
-            for audioFile in episode.audioFiles:
-                self.logger.writeLog(directory, "info", audioFile.fileName)
-            for subsFile in episode.subsFiles:
-                self.logger.writeLog(directory, "info", subsFile.fileName)
-
-    def logConfigurationMain(self):
-        logger = classLogger.Logger()
-        directory = classFileOperations.FileOperations.dirname(classFileOperations.FileOperations.abspath(__file__))
-        logger.writeLog(directory, "debug", "configurationMain:", "w+")
-        items = self.configuration.getAllPairs()
-        for item in items:
-            logger.writeLog(directory, "debug", item.key + "=" + item.value)
-        logger.writeLog(directory, "debug", "-----------------------------------")
-
-    def refreshPlex(self):
-        plex = classPlex.Plex(self.configuration)
-        plex.refershLibrary(self.configuration.getValue("plexLibrary"))
+    def refreshPlex(self,configuration):
+        plex = classPlex.Plex(configuration)
+        plex.refershLibrary(configuration.getValue("plexLibrary"))
 
     def run(self):
-        # self.configuration = classConfiguration.Configuration()
-        # self.configuration.load(sys.argv[1])
-
-        # directoryPath, userConfugirationFile = classConfiguration.Configuration.findUserConfigurationFile(
-        #     self.configuration.getValue("watcherPath"), self.configuration.getValue("configurationFileName"))
-        # if userConfugirationFile == "":
-        #     return 1
-
+        log_path = None
         try:
-            # self.loadUserConfigurationFile(
-            #     classFileOperations.FileOperations.join(directoryPath, userConfugirationFile))
-            # if not self.configuration.getValue("isTesting"):
-            #     self.renameUserConfigurationFile(directoryPath, userConfugirationFile)
-            self.configuration = classFactory.Factory.createConfiguration(sys.argv[1])
-            if self.configuration is None:
+            configuration = classFactory.Factory.createConfiguration(sys.argv[1])
+            if configuration is None:
                 return None
-            directoryPath = self.configuration.getValue("directoryPath")
-            # sourcePath = self.getSourcePath(directoryPath)
-
-            filesList = classFactory.Factory.createFilesList(directoryPath, self.configuration)
+            directoryPath = configuration.getValue("directoryPath")
+            log_path = directoryPath
+            filesList = classFactory.Factory.createFilesList(directoryPath, configuration)
 
             videoFiles = filesList.filterVideoFiles()
             audioFiles = filesList.filterAudioFiles()
             subsFiles = filesList.filterSubsFiles()
             imageFiles = filesList.filterImageFiles()
 
-            # for file in videoFiles.get_list():
-            #     print(file.fileName)
-            # videoFiles, subsFiles, audioFiles, imageFile = self.readFiles(directoryPath, sourcePath)
-
             classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(videoFiles.get_list())
             classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subsFiles.get_list())
             classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audioFiles.get_list())
 
-            # for file in audioFiles:
-            #     print(file.fileName+"="+file.number)
+            episodes_list = classFactory.Factory.createEpisodesList(videoFiles.get_list(), subsFiles.get_list(),
+                                                                    audioFiles.get_list(), imageFiles.get_list()[0],
+                                                                    configuration)
 
-            episodesList = classFactory.Factory.createEpisodesList(videoFiles.get_list(), subsFiles.get_list(),
-                                                                   audioFiles.get_list(), imageFiles.get_list()[0],
-                                                                   self.configuration)
+            episodes_list.log(directoryPath)
 
-            self.logAssemble(directoryPath, episodesList)
+            # self.logAssemble(directoryPath, episodesList)
 
-            link = classLink.Link(self.configuration)
-            link.prepareFiles(episodesList)
+            link = classLink.Link(configuration)
+            link.prepareFiles(episodes_list.episodes_list)
             link.checkTarget()
-            link.createLinks(episodesList)
+            link.createLinks(episodes_list.episodes_list)
 
             isSuccessfull = False
             cnt = 0
             while not isSuccessfull:
                 try:
-                    self.refreshPlex()
+                    self.refreshPlex(configuration)
                     isSuccessfull = True
                 except Exception as e:
                     cnt += 1
@@ -149,7 +88,12 @@ class SeriesRoutine:
 
         except Exception as e:
             logger = classLogger.Logger()
-            logger.writeLog(self.configuration.getValue("directoryPath"), "error", str(e))
+            if log_path is None:
+                path = classFileOperations.FileOperations.abspath(__file__)
+                path = classFileOperations.FileOperations.dirname(path)
+            else:
+                path = log_path
+            logger.writeLog(path, "error", str(e))
             traceback.print_exc()
 
         # TODO: Добавление файлов поодиночке
