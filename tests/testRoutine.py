@@ -1,4 +1,6 @@
 from tests.testData.case_1 import case_1
+from tests.testData.case_2 import case_2
+from tests.testData.case_3 import case_3
 from seriesRoutine import classFactory, classSeriesAnalyzer, classEpisode
 import sys
 
@@ -17,23 +19,34 @@ def check(episodes_list, model_list):
     return True
 
 
-configuration = classFactory.Factory.createConfiguration(sys.argv[1])
+def run():
+    configuration = classFactory.Factory.createConfiguration(sys.argv[1])
 
-directoryPath = configuration.getValue("directoryPath")
+    directoryPath = configuration.getValue("directoryPath")
 
-filesList = classFactory.Factory.createFilesList(directoryPath, configuration)
+    filesList = classFactory.Factory.createFilesList(directoryPath, configuration)
 
-videoFiles = filesList.filterVideoFiles()
-audioFiles = filesList.filterAudioFiles()
-subsFiles = filesList.filterSubsFiles()
-imageFiles = filesList.filterImageFiles()
+    videoFiles = filesList.filterVideoFiles()
+    audioFiles = filesList.filterAudioFiles()
+    subsFiles = filesList.filterSubsFiles()
+    imageFiles = filesList.filterImageFiles()
 
-classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(videoFiles.get_list())
-classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subsFiles.get_list())
-classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audioFiles.get_list())
+    classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(videoFiles.get_list())
+    classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subsFiles.get_list())
+    classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audioFiles.get_list())
 
-episodesList = classFactory.Factory.createEpisodesList(videoFiles.get_list(), subsFiles.get_list(),
-                                                       audioFiles.get_list(), imageFiles.get_list()[0],
-                                                       configuration)
-result = check(episodesList, case_1.get_model_list())
-print(result)
+    episodesList = classFactory.Factory.createEpisodesList(videoFiles.get_list(), subsFiles.get_list(),
+                                                           audioFiles.get_list(), imageFiles.get_list()[0],
+                                                           configuration)
+    result = check(episodesList, case_1.get_model_list())
+    print(result)
+
+
+case_1.prepare_conf()
+run()
+
+case_2.prepare_conf()
+run()
+
+case_3.prepare_conf()
+run()

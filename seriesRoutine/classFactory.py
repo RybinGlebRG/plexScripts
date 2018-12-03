@@ -60,8 +60,10 @@ class Factory:
                 for audioFile in audioFiles:
                     if audioFile.number == videoFile.number:
                         suitableAudioFiles.append(audioFile)
+            image_file_copy = Factory.copyFile(imageFile)
+            image_file_copy.number = videoFile.number
             episodesList.append(
-                Factory.createEpisode(videoFile, suitableSubsFiles, suitableAudioFiles, Factory.copyFile(imageFile)))
+                Factory.createEpisode(videoFile, suitableSubsFiles, suitableAudioFiles, image_file_copy))
         return episodesList
 
     @staticmethod
