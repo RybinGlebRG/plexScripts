@@ -7,7 +7,7 @@ class FileOperations:
 
     @staticmethod
     def open(fileName):
-        file = io.open(fileName, encoding="utf-8", errors="surrogateescape")
+        file = io.open(fileName, encoding="utf-8-sig", errors="surrogateescape")
         return file
 
     @staticmethod

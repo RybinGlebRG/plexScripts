@@ -1,0 +1,4 @@
+seasonNumber=1
+titleName=Some
+addFile=some ep five.mkv; some ep five.ac3; some ep five.ass
+addFileNumber=5; 5; 5
