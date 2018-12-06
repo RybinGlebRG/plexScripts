@@ -12,7 +12,7 @@ class SeriesRoutine:
 
     def __init__(self):
         pass
-        #self.configuration = None
+        # self.configuration = None
         # self.log_path=None
         # self.logger = classLogger.Logger()
         # self.directoryPath = ""
@@ -38,9 +38,9 @@ class SeriesRoutine:
     #         logger.writeLog(directory, "debug", item.key + "=" + item.value)
     #     logger.writeLog(directory, "debug", "-----------------------------------")
 
-    def refreshPlex(self,configuration):
+    def refreshPlex(self, configuration):
         plex = classPlex.Plex(configuration)
-        plex.refershLibrary(configuration.getValue("plexLibrary"))
+        plex.refershLibrary(configuration.getValue("plexLibrary")[0])
 
     def run(self):
         log_path = None
@@ -48,26 +48,24 @@ class SeriesRoutine:
             configuration = classFactory.Factory.createConfiguration(sys.argv[1])
             if configuration is None:
                 return None
-            directoryPath = configuration.getValue("directoryPath")
+            directoryPath = configuration.getValue("directoryPath")[0]
             log_path = directoryPath
             filesList = classFactory.Factory.createFilesList(directoryPath, configuration)
 
-            videoFiles = filesList.filterVideoFiles()
-            audioFiles = filesList.filterAudioFiles()
-            subsFiles = filesList.filterSubsFiles()
-            imageFiles = filesList.filterImageFiles()
+            video_files = filesList.filter_by_suffixes(configuration.getValue("videoFileSuffixes"))
+            audio_files = filesList.filter_by_suffixes(configuration.getValue("audioFileSuffixes"))
+            subs_files = filesList.filter_by_suffixes(configuration.getValue("subsFileSuffixes"))
+            image_files = filesList.filter_by_suffixes(configuration.getValue("imageFileSuffixes"))
 
-            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(videoFiles.get_list())
-            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subsFiles.get_list())
-            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audioFiles.get_list())
+            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(video_files)
+            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subs_files)
+            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audio_files)
 
-            episodes_list = classFactory.Factory.createEpisodesList(videoFiles.get_list(), subsFiles.get_list(),
-                                                                    audioFiles.get_list(), imageFiles.get_list()[0],
+            episodes_list = classFactory.Factory.createEpisodesList(video_files, subs_files,
+                                                                    audio_files, image_files,
                                                                     configuration)
 
             episodes_list.log(directoryPath)
-
-            # self.logAssemble(directoryPath, episodesList)
 
             link = classLink.Link(configuration)
             link.prepareFiles(episodes_list.episodes_list)
@@ -96,9 +94,6 @@ class SeriesRoutine:
             logger.writeLog(path, "error", str(e))
             traceback.print_exc()
 
-        # TODO: Добавление файлов поодиночке
-        # TODO: Файлы, имя которых отличается не только номером серии
         # TODO: Watcher должен работать с несколькими файлами, а не только одним
-        # TODO: Номер серии должен быть представлен числом. В том числе, когда указан в пользовательской конфигурации
 
-        print("END")
+        # print("END")

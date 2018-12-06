@@ -1,3 +1,5 @@
+from seriesRoutine import classEpisode
+
 import classLogger
 
 
@@ -5,6 +7,23 @@ class EpisodesList:
 
     def __init__(self):
         self.episodes_list = []
+
+    def __eq__(self, other):
+        if self.episodes_list != other.episodes_list:
+            return False
+        return True
+
+    def __ne__(self, other):
+        if self.episodes_list != other.episodes_list:
+            return True
+        return False
+
+    def __getitem__(self, key):
+        return self.episodes_list[key]
+
+
+    def add(self, episode):
+        self.episodes_list.append(episode)
 
     def log(self, directory):
         logger = classLogger.Logger()

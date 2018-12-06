@@ -13,7 +13,7 @@ def get_model_list():
         video_file = classFactory.Factory.createFile("some episode" + str(i) + ".mkv", path)
         video_file.possibleSeriesNumbers = [i]
         video_file.number = i
-        episode.addVideoFile(video_file)
+        episode.add_video_file(video_file)
 
         image_file = classFactory.Factory.createFile("some.jpg", path)
         image_file.number = i
@@ -29,9 +29,9 @@ def get_model_list():
         subs_file.possibleSeriesNumbers = [i]
         subs_file.number = i
 
-        episode.addAudioFile(audio_file)
-        episode.addSubsFile(subs_file)
-        episode.addImageFile(image_file)
+        episode.add_audio_file(audio_file)
+        episode.add_subs_file(subs_file)
+        episode.add_image_file(image_file)
         episodes_list.append(episode)
 
     episode = classEpisode.Episode(5)
@@ -41,7 +41,7 @@ def get_model_list():
     video_file = classFactory.Factory.createFile("some ep five.mkv", path)
     video_file.possibleSeriesNumbers = [5]
     video_file.number = 5
-    episode.addVideoFile(video_file)
+    episode.add_video_file(video_file)
 
     image_file = classFactory.Factory.createFile("some.jpg", path)
     image_file.number = 5
@@ -57,9 +57,9 @@ def get_model_list():
     subs_file.possibleSeriesNumbers = [5]
     subs_file.number = 5
 
-    episode.addAudioFile(audio_file)
-    episode.addSubsFile(subs_file)
-    episode.addImageFile(image_file)
+    episode.add_audio_file(audio_file)
+    episode.add_subs_file(subs_file)
+    episode.add_image_file(image_file)
     episodes_list.append(episode)
     return episodes_list
 

@@ -4,6 +4,20 @@ class KeyValue:
         self.key = key
         self.value = value
 
+    def __eq__(self, other):
+        if self.key != other.key:
+            return False
+        if self.value != other.value:
+            return False
+        return True
+
+    def __ne__(self, other):
+        if self.key != other.key:
+            return True
+        if self.value != other.value:
+            return True
+        return False
+
     def getKey(self):
         return self.key
 

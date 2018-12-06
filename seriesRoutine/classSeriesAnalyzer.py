@@ -6,9 +6,6 @@ class SeriesAnalyzer:
 
     def __init__(self):
         pass
-        # self.analyzingGroupsList = []
-        # self.files = files
-        # self.currentHypothesis = -1
 
     @staticmethod
     def findHypoteses(files):
@@ -114,30 +111,11 @@ class SeriesAnalyzer:
     def setFileNumber(files):
         SeriesAnalyzer.findHypoteses(files)
 
-        # for file in files:
-        #     print(file.fileName)
-        #     print(file.possibleSeriesNumbers)
-        #     print("-------------------------------")
-
         groups = SeriesAnalyzer.divideByGroup(files)
         SeriesAnalyzer.analyzeHypoteses(files, groups)
 
         for group in groups:
-            #max_number = 0
             for file in group.files:
                 if file.number is None:
                     file.number=file.possibleSeriesNumbers[group.hypothesis]
-            #     if file.number is not None:
-            #         cur_num = file.number
-            #     else:
-            #         cur_num = file.possibleSeriesNumbers[group.hypothesis]
-            #
-            #     if cur_num > max_number:
-            #         max_number = cur_num
-            # for file in group.files:
-            #     if file.number is not None:
-            #         file.number = file.number  # .lstrip("0").zfill(len(str(max_number)))
-            #     else:
-            #         file.number = file.possibleSeriesNumbers[
-            #             group.hypothesis]  # .lstrip("0").zfill(len(str(max_number)))
 

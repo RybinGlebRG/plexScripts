@@ -10,21 +10,26 @@ class Factory:
 
     @staticmethod
     def checkIfSpecified(file, configuration):
-        if configuration is not None:
-            if configuration.isIncludes("addFile", file.fileName):
-                addFiles = configuration.getValueAsList("addFile")
-                for i in range(0, len(addFiles)):
-                    if addFiles[i] == file.fileName:
-                        file.number = configuration.getValueAsList("addFileNumber")[i].lstrip("")
-                        if file.number == "":
-                            file.number = 0
-                        else:
-                            file.number = int(file.number)
+        if configuration.isIncludes("addFile", file.fileName):
+            addFiles = configuration.getValue("addFile")
+            # for i in range(0, len(addFiles)):
+            #     if addFiles[i] == file.fileName:
+            #         file.number = configuration.getValueAsList("addFileNumber")[i].lstrip("")
+            #         if file.number == "":
+            #             file.number = "0"
+            #
+            #         file.number = int(file.number)
+            i = addFiles.index(file.fileName)
+            file.number = configuration.getValue("addFileNumber")[i].lstrip("0")
+            if file.number == "":
+                file.number = "0"
+            file.number = int(file.number)
 
     @staticmethod
     def createFile(fileName, path, configuration=None):
         file = classFile.File(fileName, path)
-        Factory.checkIfSpecified(file, configuration)
+        if configuration is not None:
+            Factory.checkIfSpecified(file, configuration)
         return file
 
     @staticmethod
@@ -38,34 +43,27 @@ class Factory:
     @staticmethod
     def createEpisode(videoFile, subsFiles, audioFiles, imageFile):
         episode = classEpisode.Episode(videoFile.number)
-        episode.addVideoFile(videoFile)
-        for subsFile in subsFiles:
-            episode.addSubsFile(subsFile)
-        for audioFile in audioFiles:
-            episode.addAudioFile(audioFile)
-        episode.addImageFile(imageFile)
+        episode.video_file = videoFile
+        episode.subs_files = subsFiles
+        episode.audio_files = audioFiles
+        episode.image_file = imageFile
         return episode
 
     @staticmethod
-    def createEpisodesList(videoFiles, subsFiles, audioFiles, imageFile, configuration):
-        episodesList = []
+    def createEpisodesList(videoFiles, subsFiles, audioFiles, imageFiles, configuration):
+        episodes_list = ClassEpisodesList.EpisodesList()
         for videoFile in videoFiles:
-            suitableSubsFiles = []
-            if configuration.getValue("linkSubs") != "N":
-                for subsFile in subsFiles:
-                    if subsFile.number == videoFile.number:
-                        suitableSubsFiles.append(subsFile)
-            suitableAudioFiles = []
-            if configuration.getValue("linkAudio") != "N":
-                for audioFile in audioFiles:
-                    if audioFile.number == videoFile.number:
-                        suitableAudioFiles.append(audioFile)
-            image_file_copy = Factory.copyFile(imageFile)
+            suitable_subs_files = None
+            if configuration.getValue("linkSubs")[0] != "N":
+                suitable_subs_files = subsFiles.filter_by_number(videoFile.number)
+
+            suitable_audio_files = None
+            if configuration.getValue("linkAudio")[0] != "N":
+                suitable_audio_files = audioFiles.filter_by_number(videoFile.number)
+            image_file_copy = Factory.copyFile(imageFiles.get_list()[0])
             image_file_copy.number = videoFile.number
-            episodesList.append(
-                Factory.createEpisode(videoFile, suitableSubsFiles, suitableAudioFiles, image_file_copy))
-        episodes_list=ClassEpisodesList.EpisodesList()
-        episodes_list.episodes_list=episodesList
+            episode = Factory.createEpisode(videoFile, suitable_subs_files, suitable_audio_files, image_file_copy)
+            episodes_list.add(episode)
         return episodes_list
 
     @staticmethod
@@ -75,10 +73,10 @@ class Factory:
         configuration.checkWatcherPath()
         # print(configuration.getValue("watcherPath"))
         directoryPath, userConfugirationFile = classConfiguration.Configuration.findUserConfigurationFile(
-            configuration.getValue("watcherPath"), configuration.getValue("configurationFileName"))
+            configuration.getValue("watcherPath")[0], configuration.getValue("configurationFileName")[0])
         if userConfugirationFile == "":
             return None
-        configuration.createKey("directoryPath", directoryPath)
+        configuration.setValue("directoryPath", directoryPath)
         configuration.load(classFileOperations.FileOperations.join(directoryPath, userConfugirationFile))
         configuration.deleteForbiddenSymbolsFromValue("titleName")
         configuration.formatSeasonNumber()
@@ -88,11 +86,11 @@ class Factory:
                                                     classFileOperations.FileOperations.join(directoryPath,
                                                                                             userConfugirationFile)),
             classFileOperations.FileOperations.join(directoryPath,
-                                                    configuration.getValue("configurationFileNameUsed")))
+                                                    configuration.getValue("configurationFileNameUsed")[0]))
         return configuration
 
     @staticmethod
-    def createFilesList(directoryPath, configuration, list=None):
+    def createFilesList(directoryPath=None, configuration=None):
         def getSourcePath(directoryPath, configuration):
             folders = []
             for folderList in classFileOperations.FileOperations.walk(directoryPath):
@@ -102,15 +100,18 @@ class Factory:
             for folder in folders:
                 if configuration.isIncludes("sourcePossibleLocation", folder):
                     sourcePath = classFileOperations.FileOperations.join(directoryPath, folder)
-                    if configuration.getValue("linkAudio") == "A":
+                    if configuration.getValue("linkAudio")[0] == "A":
                         configuration.setValue("linkAudio", "N")
-                    if configuration.getValue("linkSubs") == "A":
+                    if configuration.getValue("linkSubs")[0] == "A":
                         configuration.setValue("linkSubs", "N")
                     break
             return sourcePath
 
-        langPath = classFileOperations.FileOperations.join(directoryPath, configuration.getValue("langPath"))
-        filesList = classFilesList.FilesList(configuration)
+        filesList = classFilesList.FilesList()
+        if directoryPath is None:
+            return filesList
+
+        langPath = classFileOperations.FileOperations.join(directoryPath, configuration.getValue("langPath")[0])
         sourcePath = getSourcePath(directoryPath, configuration)
 
         for file in classFileOperations.FileOperations.listdir(sourcePath):

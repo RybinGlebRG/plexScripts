@@ -1,54 +1,51 @@
-from seriesRoutine import classFile
+from seriesRoutine import classFile, classFactory
 
 
 class Episode:
 
-    def __init__(self, episodeNumber):
-        self.videoFile = None
-        self.audioFiles = []
-        self.subsFiles = []
-        self.episodeNumber = episodeNumber
-        self.imageFile = None
+    def __init__(self, episode_number):
+        self.video_file = classFactory.Factory.createFilesList()
+        self.episode_number = episode_number
+        self.image_file = classFactory.Factory.createFilesList()
+        self.audio_files = classFactory.Factory.createFilesList()
+        self.subs_files = classFactory.Factory.createFilesList()
 
-    def addVideoFile(self, videoFile):
-        self.videoFile = videoFile
+    def __eq__(self, other):
+        if self.episode_number != other.episode_number:
+            return False
+        if self.video_file != other.video_file:
+            return False
+        if self.audio_files != other.audio_files:
+            return False
+        if self.subs_files != other.subs_files:
+            return False
+        if self.image_file != other.image_file:
+            return False
 
-    def addAudioFile(self, audioFile):
-        self.audioFiles.append(audioFile)
+        return True
 
-    def addSubsFile(self, subsFile):
-        self.subsFiles.append(subsFile)
+    def __ne__(self, other):
+        if self.episode_number != other.episode_number:
+            return True
+        if self.video_file != other.video_file:
+            return True
+        if self.audio_files != other.audio_files:
+            return True
+        if self.subs_files != other.subs_files:
+            return True
+        if self.image_file != other.image_file:
+            return True
 
-    def addImageFile(self, imageFile):
-        self.imageFile = imageFile
+        return False
 
-    @staticmethod
-    def are_equal(episode_1, episode_2):
-        equal = True
-        if not classFile.File.are_equal(episode_1.videoFile, episode_2.videoFile):
-            #print("1")
-            equal = False
-        if len(episode_1.audioFiles) != len(episode_2.audioFiles):
-            #print("2")
-            equal = False
-        else:
-            for i in range(0, len(episode_1.audioFiles)):
-                if not classFile.File.are_equal(episode_1.audioFiles[i], episode_2.audioFiles[i]):
-                    #print("3")
-                    equal = False
-        if len(episode_1.subsFiles) != len(episode_2.subsFiles):
-            #print("4")
-            equal = False
-        else:
-            for i in range(0, len(episode_1.subsFiles)):
-                if not classFile.File.are_equal(episode_1.subsFiles[i], episode_2.subsFiles[i]):
-                    #print("5")
-                    equal = False
-        if episode_1.episodeNumber != episode_2.episodeNumber:
-            #print("6")
-            equal = False
-        if not classFile.File.are_equal(episode_1.imageFile, episode_2.imageFile):
-            #print("7")
-            equal = False
+    def add_video_file(self, video_file):
+        self.video_file = video_file
 
-        return equal
+    def add_audio_file(self, audio_file):
+        self.audio_files.add(audio_file)
+
+    def add_subs_file(self, subs_file):
+        self.subs_files.add(subs_file)
+
+    def add_image_file(self, image_file):
+        self.image_file = image_file
