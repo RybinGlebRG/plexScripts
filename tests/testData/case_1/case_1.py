@@ -1,4 +1,5 @@
-from seriesRoutine import classFactory, classSeriesAnalyzer, classKeyValue, classEpisode, ClassEpisodesList
+from seriesRoutine import classFactory, classEpisode, ClassEpisodesList
+from seriesRoutine.Analyzer import classSeriesAnalyzer
 from tests.testData.case_1 import check, prepare
 import sys
 import classFileOperations

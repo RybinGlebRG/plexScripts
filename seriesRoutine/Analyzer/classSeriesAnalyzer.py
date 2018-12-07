@@ -1,5 +1,5 @@
 import re
-from seriesRoutine import classAnalyzingGroup
+from seriesRoutine.Analyzer import classAnalyzingGroup
 
 
 class SeriesAnalyzer:

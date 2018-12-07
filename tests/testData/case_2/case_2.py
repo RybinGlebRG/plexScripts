@@ -1,6 +1,5 @@
-from seriesRoutine import classFactory, classSeriesAnalyzer, classKeyValue, classEpisode
-from tests.testData.case_1 import check, prepare
-import sys
+from seriesRoutine import classFactory, classEpisode
+from tests.testData.case_1 import prepare
 import classFileOperations
 
 def get_model_list():

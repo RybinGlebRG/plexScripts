@@ -20,7 +20,7 @@ class Parser:
                     break
             if not foundDelimeter:
                 key = None
-            return key.strip()
+            return key.strip().upper()
 
         def getValueFromString(line):
             def isMultipleValues(value):
@@ -36,14 +36,16 @@ class Parser:
             if delimiter != -1:
                 if not isMultipleValues(line[(delimiter + 1):]):
                     value = line[(delimiter + 1):]
-                    value = list(value.strip())
+                    value = value.strip()
+                    if len(value) == 0:
+                        value = None
+                    else:
+                        value = [value]
                 else:
                     value = line[(delimiter + 1):]
                     value = value.split(";")
                     for i in range(0, len(value)):
                         value[i] = value[i].strip()
-                if len(value) == 0:
-                    value = None
             return value
 
         lines = classFileOperations.FileOperations.readFile(file_name)

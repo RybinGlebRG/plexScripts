@@ -1,3 +1,7 @@
+import classFileOperations
+from seriesRoutine import classFile
+
+
 class FilesList:
 
     def __init__(self):
@@ -28,42 +32,6 @@ class FilesList:
     def add(self, file):
         self.filesList.append(file)
 
-    # def filterVideoFiles(self):
-    #     videoFilesList = FilesList()
-    #     videoFiles = []
-    #     for file in self.filesList:
-    #         if self.configuration.isIncludes("videoFileSuffixes", file.getSuffix()):
-    #             videoFiles.append(file)
-    #             videoFilesList.add(file)
-    #     return videoFilesList
-    #
-    # def filterAudioFiles(self):
-    #     audioFilesList = FilesList(self.configuration)
-    #     audioFiles = []
-    #     for file in self.filesList:
-    #         if self.configuration.isIncludes("audioFileSuffixes", file.getSuffix()):
-    #             audioFiles.append(file)
-    #             audioFilesList.add(file)
-    #     return audioFilesList
-    #
-    # def filterSubsFiles(self):
-    #     subs_files_list = FilesList(self.configuration)
-    #     subsFiles = []
-    #     for file in self.filesList:
-    #         if self.configuration.isIncludes("subsFileSuffixes", file.getSuffix()):
-    #             subsFiles.append(file)
-    #             subs_files_list.add(file)
-    #     return subs_files_list
-    #
-    # def filterImageFiles(self):
-    #     image_files_list = FilesList(self.configuration)
-    #     imageFiles = []
-    #     for file in self.filesList:
-    #         if self.configuration.isIncludes("imageFileSuffixes", file.getSuffix()):
-    #             imageFiles.append(file)
-    #             image_files_list.add(file)
-    #     return image_files_list
-
     def filter_by_number(self, number):
         filtered = FilesList()
         for file in self.filesList:
@@ -77,3 +45,38 @@ class FilesList:
             if file.getSuffix() in suffixes:
                 filtered.add(file)
         return filtered
+
+    def load(self, directoryPath, configuration):
+        def getSourcePath(directoryPath, configuration):
+            folders = []
+            for folderList in classFileOperations.FileOperations.walk(directoryPath):
+                folders = folderList[1]
+                break
+            sourcePath = directoryPath
+            for folder in folders:
+                if configuration.isIncludes("sourcePossibleLocation", folder):
+                    sourcePath = classFileOperations.FileOperations.join(directoryPath, folder)
+                    if configuration.getValue("linkAudio")[0] == "A":
+                        configuration.setValue("linkAudio", "N")
+                    if configuration.getValue("linkSubs")[0] == "A":
+                        configuration.setValue("linkSubs", "N")
+                    break
+            return sourcePath
+
+        langPath = classFileOperations.FileOperations.join(directoryPath, configuration.getValue("langPath")[0])
+        sourcePath = getSourcePath(directoryPath, configuration)
+
+        for file in classFileOperations.FileOperations.listdir(sourcePath):
+            if classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, file)):
+                new_file = classFile.File(file, sourcePath)
+                new_file.check_specified(configuration)
+                self.add(new_file)
+
+        for vector in classFileOperations.FileOperations.walk(langPath):
+            for file in vector[2]:
+                new_file = classFile.File(file, vector[0])
+                new_file.check_specified(configuration)
+                self.add(new_file)
+
+    def clear(self):
+        self.filesList.clear()

@@ -1,14 +1,14 @@
-from seriesRoutine import classFile, classFactory
+from seriesRoutine import classFile, classFactory, classFilesList
 
 
 class Episode:
 
     def __init__(self, episode_number):
-        self.video_file = classFactory.Factory.createFilesList()
+        self.video_file = classFilesList.FilesList()
         self.episode_number = episode_number
-        self.image_file = classFactory.Factory.createFilesList()
-        self.audio_files = classFactory.Factory.createFilesList()
-        self.subs_files = classFactory.Factory.createFilesList()
+        self.image_file = classFilesList.FilesList()
+        self.audio_files = classFilesList.FilesList()
+        self.subs_files = classFilesList.FilesList()
 
     def __eq__(self, other):
         if self.episode_number != other.episode_number:
@@ -49,3 +49,9 @@ class Episode:
 
     def add_image_file(self, image_file):
         self.image_file = image_file
+
+    def delete_specified(self, configuration):
+        if configuration.getValue("linkSubs")[0] != "N":
+            self.subs_files.clear()
+        if configuration.getValue("linkAudio")[0] != "N":
+            self.audio_files.clear()

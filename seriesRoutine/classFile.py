@@ -33,3 +33,19 @@ class File:
         if self.possibleSeriesNumbers != other.possibleSeriesNumbers:
             return True
         return False
+
+    def check_specified(self, configuration):
+        if configuration is not None:
+            if configuration.isIncludes("addFile", self.fileName):
+                addFiles = configuration.getValue("addFile")
+                i = addFiles.index(self.fileName)
+                self.number = configuration.getValue("addFileNumber")[i].lstrip("0")
+                if self.number == "":
+                    self.number = "0"
+                    self.number = int(self.number)
+
+    def copy(self):
+        file = File(self.fileName, self.path)
+        file.number = self.number
+        file.linkFileName = self.linkFileName
+        file.possibleSeriesNumbers = self.possibleSeriesNumbers.copy()

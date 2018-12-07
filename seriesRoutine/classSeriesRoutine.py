@@ -1,42 +1,18 @@
-import os
-from seriesRoutine import classSeriesAnalyzer, classConfiguration, classLink, \
+from seriesRoutine import classLink, \
     classPlex, ClassEpisodesList
+from seriesRoutine.Configuration import classConfiguration
+from seriesRoutine.Analyzer import classSeriesAnalyzer
 import classLogger
 import classFileOperations
 import traceback
 import sys
-from seriesRoutine import classFilesList, classFactory
+from seriesRoutine import classFilesList
 
 
 class SeriesRoutine:
 
     def __init__(self):
         pass
-        # self.configuration = None
-        # self.log_path=None
-        # self.logger = classLogger.Logger()
-        # self.directoryPath = ""
-
-    # def logAssemble(self, directory, episodesList):
-    #     episodesList.sort(key=lambda item: item.episodeNumber)
-    #     self.logger.writeLog(directory, "info", "Файлы, сгруппированные по сериям:", "w+")
-    #     for episode in episodesList:
-    #         self.logger.writeLog(directory, "info", "------------------------------------")
-    #         self.logger.writeLog(directory, "info", str(episode.episodeNumber) + ":")
-    #         self.logger.writeLog(directory, "info", episode.videoFile.fileName)
-    #         for audioFile in episode.audioFiles:
-    #             self.logger.writeLog(directory, "info", audioFile.fileName)
-    #         for subsFile in episode.subsFiles:
-    #             self.logger.writeLog(directory, "info", subsFile.fileName)
-
-    # def logConfigurationMain(self):
-    #     logger = classLogger.Logger()
-    #     directory = classFileOperations.FileOperations.dirname(classFileOperations.FileOperations.abspath(__file__))
-    #     logger.writeLog(directory, "debug", "configurationMain:", "w+")
-    #     items = self.configuration.getAllPairs()
-    #     for item in items:
-    #         logger.writeLog(directory, "debug", item.key + "=" + item.value)
-    #     logger.writeLog(directory, "debug", "-----------------------------------")
 
     def refreshPlex(self, configuration):
         plex = classPlex.Plex(configuration)
@@ -45,12 +21,15 @@ class SeriesRoutine:
     def run(self):
         log_path = None
         try:
-            configuration = classFactory.Factory.createConfiguration(sys.argv[1])
-            if configuration is None:
+            configuration = classConfiguration.Configuration()
+            configuration.load(sys.argv[1])
+            if not configuration.is_ready():
                 return None
-            directoryPath = configuration.getValue("directoryPath")[0]
-            log_path = directoryPath
-            filesList = classFactory.Factory.createFilesList(directoryPath, configuration)
+            directory_path = configuration.getValue("directoryPath")[0]
+
+            log_path = directory_path
+            filesList = classFilesList.FilesList()
+            filesList.load(directory_path, configuration)
 
             video_files = filesList.filter_by_suffixes(configuration.getValue("videoFileSuffixes"))
             audio_files = filesList.filter_by_suffixes(configuration.getValue("audioFileSuffixes"))
@@ -61,11 +40,10 @@ class SeriesRoutine:
             classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subs_files)
             classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audio_files)
 
-            episodes_list = classFactory.Factory.createEpisodesList(video_files, subs_files,
-                                                                    audio_files, image_files,
-                                                                    configuration)
+            episodes_list = ClassEpisodesList.EpisodesList()
+            episodes_list.load(video_files, subs_files, audio_files, image_files)
 
-            episodes_list.log(directoryPath)
+            episodes_list.log(directory_path)
 
             link = classLink.Link(configuration)
             link.prepareFiles(episodes_list.episodes_list)
