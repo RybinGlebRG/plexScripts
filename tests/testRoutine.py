@@ -1,13 +1,19 @@
 # from seriesRoutine.Analyzer import classSeriesAnalyzer, unit_test
 from seriesRoutine.Analyzer import ClassAnalyzerTests
+from seriesRoutine.Episodes import ClassEpisodesTests
 
 
 # case_1.run()
 
 
 def run():
+    result = True
+
     analyzer_tests = ClassAnalyzerTests.AnalyzerTests()
-    result = analyzer_tests.run()
+    result = result and analyzer_tests.run()
+
+    episodes_tests = ClassEpisodesTests.EpisodesTests()
+    result = result and episodes_tests.run()
     print(result)
 
 
