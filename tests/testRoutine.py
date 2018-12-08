@@ -1,18 +1,13 @@
-from tests.testData.case_1 import case_1
-from tests.testData.case_2 import case_2
-from tests.testData.case_3 import case_3
-from seriesRoutine import ClassEpisodesList, classFilesList
-from seriesRoutine.Configuration import classConfiguration
-from seriesRoutine.Analyzer import classSeriesAnalyzer, unit_test
-import sys
+# from seriesRoutine.Analyzer import classSeriesAnalyzer, unit_test
+from seriesRoutine.Analyzer import ClassAnalyzerTests
 
 
 # case_1.run()
 
 
 def run():
-    result = True
-    result = result and unit_test.run()
+    analyzer_tests = ClassAnalyzerTests.AnalyzerTests()
+    result = analyzer_tests.run()
     print(result)
 
 

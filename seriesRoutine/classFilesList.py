@@ -6,25 +6,22 @@ class FilesList:
 
     def __init__(self):
         self.filesList = []
-        # self.configuration = None
-        # self.test_data = []
 
     def __eq__(self, other):
         if self.filesList != other.filesList:
             return False
-        # if self.configuration != other.configuration:
-        #     return False
         return True
 
     def __ne__(self, other):
         if self.filesList != other.filesList:
             return True
-        # if self.configuration != other.configuration:
-        #     return True
         return False
 
     def __getitem__(self, key):
         return self.filesList[key]
+
+    def __iter__(self):
+        return iter(self.filesList)
 
     def get_list(self):
         return self.filesList

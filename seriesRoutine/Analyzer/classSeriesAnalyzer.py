@@ -88,7 +88,6 @@ class SeriesAnalyzer:
         for group in groups:
             # print("------------------------")
             # print(group.path)
-            # TODO: Получение длины нужно переписать
             # Полагаем, что в группе файлов все файлы, которые отличаются только номером серии
             # имеют номер серии, равный None. Файлы, отличающиеся от основных должны быть явно
             # прописаны в пользовательской конфигурации и на данный момент уже иметь номер серии
@@ -97,6 +96,7 @@ class SeriesAnalyzer:
                 # print(file.fileName)
                 if file.number is None:
                     length = len(file.possibleSeriesNumbers)
+                    break
             for i in range(0, length):
                 currentHypothesis = i
                 conditionsMet = SeriesAnalyzer.checkConditionsForGroup(group, currentHypothesis)

@@ -7,7 +7,7 @@ def check(episodesList):
 
             if episode.episodeNumber == i:
 
-                if episode.videoFile.fileName != "some episode"+str(i)+".mkv":
+                if episode.video_file.fileName != "some episode"+str(i)+".mkv":
                     #result = False
                     return False
                 for audioFile in episode.audioFiles:

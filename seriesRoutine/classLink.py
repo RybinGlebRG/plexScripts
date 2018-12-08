@@ -1,5 +1,3 @@
-import os
-import shutil
 import classFileOperations
 
 
@@ -21,33 +19,32 @@ class Link:
 
         max_num = 0
         for item in episodesList:
-            if item.episodeNumber > max_num:
+            if item.episode_number > max_num:
                 max_num = item.episodeNumber
         max_num = len(str(max_num))
 
         seasonNumber = self.configuration.getValue("seasonNumber")
-        # if int(seasonNumber) < 10:
-        #     seasonNumber = "0" + seasonNumber
+
         titleName = self.configuration.getValue("titleName")
         for episode in episodesList:
-            episode.videoFile.linkFileName = titleName + " - s" + seasonNumber + "e" + (
-                str(episode.episodeNumber)).zfill(max_num) + \
-                                             "." + episode.videoFile.getSuffix()
+            episode.video_file.linkFileName = titleName + " - s" + seasonNumber + "e" + (
+                str(episode.episode_number)).zfill(max_num) + \
+                                             "." + episode.video_file.getSuffix()
             episode.imageFile.linkFileName = titleName + " - s" + seasonNumber + "e" + (
-                str(episode.episodeNumber)).zfill(max_num) + \
+                str(episode.episode_number)).zfill(max_num) + \
                                              "." + episode.imageFile.getSuffix()
             # print(episode.videoFile.linkFileName)
             # print(episode.imageFile.linkFileName)
             counter = ""
             for item in episode.audioFiles:
                 item.linkFileName = titleName + " - s" + seasonNumber + "e" + (str(
-                    episode.episodeNumber)).zfill(max_num) + counter + "." + item.getSuffix()
+                    episode.episode_number)).zfill(max_num) + counter + "." + item.getSuffix()
                 counter = incrementCounter(counter)
             counter = ""
             for item in episode.subsFiles:
                 # print(counter)
                 item.linkFileName = titleName + " - s" + seasonNumber + "e" + (str(
-                    episode.episodeNumber)).zfill(max_num) + counter + "." + item.getSuffix()
+                    episode.episode_number)).zfill(max_num) + counter + "." + item.getSuffix()
                 counter = incrementCounter(counter)
 
     def checkTarget(self):
@@ -91,9 +88,9 @@ class Link:
             trueMountPoint = self.configuration.getValue("trueMountPoint")
             for episode in episodesList:
                 classFileOperations.FileOperations.symlink(classFileOperations.FileOperations.join(
-                    episode.videoFile.path.replace(mountPoint, trueMountPoint),
-                    episode.videoFile.fileName)
-                    , classFileOperations.FileOperations.join(targetFolder, episode.videoFile.linkFileName))
+                    episode.video_file.path.replace(mountPoint, trueMountPoint),
+                    episode.video_file.fileName)
+                    , classFileOperations.FileOperations.join(targetFolder, episode.video_file.linkFileName))
                 classFileOperations.FileOperations.symlink(classFileOperations.FileOperations.join(
                     episode.imageFile.path.replace(mountPoint, trueMountPoint),
                     episode.imageFile.fileName)

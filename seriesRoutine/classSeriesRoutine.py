@@ -1,5 +1,6 @@
 from seriesRoutine import classLink, \
-    classPlex, ClassEpisodesList
+    classPlex
+from seriesRoutine.Episodes import ClassEpisodesList
 from seriesRoutine.Configuration import classConfiguration
 from seriesRoutine.Analyzer import classSeriesAnalyzer
 import classLogger

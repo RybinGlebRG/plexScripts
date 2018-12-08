@@ -1,4 +1,4 @@
-from seriesRoutine import classFile, classFactory, classFilesList
+from seriesRoutine import classFilesList
 
 
 class Episode:

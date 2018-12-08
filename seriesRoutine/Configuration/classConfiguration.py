@@ -24,6 +24,11 @@ class Configuration:
         if value is None:
             self.keyValueList[key.upper()] = None
             return
+        for item in value:
+            if item is not None:
+                break
+            self.keyValueList[key.upper()] = None
+            return
         self.keyValueList[key.upper()] = value
 
     def is_key_exists(self, key):
@@ -122,12 +127,11 @@ class Configuration:
                     break
         self.setValue("directoryPath", [foundDirectory])
         self.setValue("userConfigurationFile", [foundFile])
-
         if self.getValue("userConfigurationFile") is None:
             return
         self.fill(classFileOperations.FileOperations.join(self.getValue("directoryPath")[0],
                                                           self.getValue("userConfigurationFile")[0]))
-        self.print()
+        #self.print()
         self.deleteForbiddenSymbolsFromValue("titleName")
         self.formatSeasonNumber()
 

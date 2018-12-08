@@ -1,4 +1,5 @@
-from seriesRoutine import classFactory, classEpisode
+from seriesRoutine import classFactory
+from seriesRoutine.Episodes import classEpisode
 from tests.testData.case_1 import prepare
 import classFileOperations
 

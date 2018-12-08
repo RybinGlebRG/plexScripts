@@ -49,3 +49,4 @@ class File:
         file.number = self.number
         file.linkFileName = self.linkFileName
         file.possibleSeriesNumbers = self.possibleSeriesNumbers.copy()
+        return file
