@@ -31,6 +31,9 @@ class FilesList:
 
     def filter_by_number(self, number):
         filtered = FilesList()
+        # Should not filter by number if there is no number
+        if number is None:
+            return filtered
         for file in self.filesList:
             if file.number == number:
                 filtered.add(file)
@@ -38,6 +41,9 @@ class FilesList:
 
     def filter_by_suffixes(self, suffixes):
         filtered = FilesList()
+        # Should not filter by suffixes if there are no suffixes
+        if suffixes is None:
+            return filtered
         for file in self.filesList:
             if file.getSuffix() in suffixes:
                 filtered.add(file)

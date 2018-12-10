@@ -2,7 +2,7 @@ from seriesRoutine import classLink, \
     classPlex
 from seriesRoutine.Episodes import ClassEpisodesList
 from seriesRoutine.Configuration import classConfiguration
-from seriesRoutine.Analyzer import classSeriesAnalyzer
+from seriesRoutine.Analyzer import ClassSeriesAnalyzer
 import classLogger
 import classFileOperations
 import traceback
@@ -37,9 +37,9 @@ class SeriesRoutine:
             subs_files = filesList.filter_by_suffixes(configuration.getValue("subsFileSuffixes"))
             image_files = filesList.filter_by_suffixes(configuration.getValue("imageFileSuffixes"))
 
-            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(video_files)
-            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subs_files)
-            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audio_files)
+            ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(video_files)
+            ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subs_files)
+            ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audio_files)
 
             episodes_list = ClassEpisodesList.EpisodesList()
             episodes_list.load(video_files, subs_files, audio_files, image_files)

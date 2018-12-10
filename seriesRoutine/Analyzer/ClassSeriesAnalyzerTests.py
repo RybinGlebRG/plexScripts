@@ -1,5 +1,5 @@
 from seriesRoutine import classFilesList, classFile
-from seriesRoutine.Analyzer import classSeriesAnalyzer
+from seriesRoutine.Analyzer import ClassSeriesAnalyzer
 
 
 class AnalyzerTests:
@@ -24,7 +24,7 @@ class AnalyzerTests:
             return files
 
         def act(files):
-            classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(files)
+            ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(files)
 
         def check(files):
             for file in files:

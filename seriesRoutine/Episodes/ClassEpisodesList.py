@@ -21,6 +21,9 @@ class EpisodesList:
     def __getitem__(self, key):
         return self.episodes_list[key]
 
+    def __iter__(self):
+        return iter(self.episodes_list)
+
     def add(self, episode):
         self.episodes_list.append(episode)
 
@@ -33,7 +36,9 @@ class EpisodesList:
             for audio_file in audio_files.filter_by_number(episode.episode_number):
                 episode.add_audio_file(audio_file)
             for image_file in image_files:
-                episode.add_image_file(image_file.copy())
+                image_file_copy = image_file.copy()
+                image_file_copy.number = episode.episode_number
+                episode.add_image_file(image_file_copy)
                 break
             self.episodes_list.append(episode)
 
