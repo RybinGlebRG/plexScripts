@@ -1,7 +1,5 @@
 from seriesRoutine.Episodes import classEpisode
 
-import classLogger
-
 
 class EpisodesList:
 

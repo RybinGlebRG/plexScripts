@@ -15,27 +15,33 @@ class SeriesRoutine:
     def __init__(self):
         pass
 
-    def refreshPlex(self, configuration):
-        plex = classPlex.Plex(configuration)
-        plex.refershLibrary(configuration.getValue("plexLibrary")[0])
+    # def refreshPlex(self, configuration):
+    #     plex = classPlex.Plex(configuration)
+    #     plex.refershLibrary(configuration.getValue("plexLibrary")[0])
 
     def run(self):
         log_path = None
         try:
+            logger = classLogger.Logger()
             configuration = classConfiguration.Configuration()
             configuration.load(sys.argv[1])
             if not configuration.is_ready():
                 return None
+            logger.writeLog(
+                classFileOperations.FileOperations.dirname(classFileOperations.FileOperations.abspath(__file__)),
+                configuration.log(),
+                level="debug",
+                mode="w+")
             directory_path = configuration.getValue("directoryPath")[0]
 
             log_path = directory_path
-            filesList = classFilesList.FilesList()
-            filesList.load(directory_path, configuration)
+            files_list = classFilesList.FilesList()
+            files_list.load(directory_path, configuration)
 
-            video_files = filesList.filter_by_suffixes(configuration.getValue("videoFileSuffixes"))
-            audio_files = filesList.filter_by_suffixes(configuration.getValue("audioFileSuffixes"))
-            subs_files = filesList.filter_by_suffixes(configuration.getValue("subsFileSuffixes"))
-            image_files = filesList.filter_by_suffixes(configuration.getValue("imageFileSuffixes"))
+            video_files = files_list.filter_by_suffixes(configuration.getValue("videoFileSuffixes"))
+            audio_files = files_list.filter_by_suffixes(configuration.getValue("audioFileSuffixes"))
+            subs_files = files_list.filter_by_suffixes(configuration.getValue("subsFileSuffixes"))
+            image_files = files_list.filter_by_suffixes(configuration.getValue("imageFileSuffixes"))
 
             ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(video_files)
             ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subs_files)
@@ -46,25 +52,16 @@ class SeriesRoutine:
 
             episodes_list_log = episodes_list.log()
 
-            logger = classLogger.Logger()
             logger.writeLog(directory_path, episodes_list_log, mode="w+")
 
             link = classLink.Link(configuration)
-            link.prepareFiles(episodes_list.episodes_list)
-            link.checkTarget()
+            # link.prepareFiles(episodes_list.episodes_list)
+            # link.checkTarget()
+            # TODO: Make following function entry point
             link.createLinks(episodes_list.episodes_list)
 
-            isSuccessfull = False
-            cnt = 0
-            while not isSuccessfull:
-                try:
-                    self.refreshPlex(configuration)
-                    isSuccessfull = True
-                except Exception as e:
-                    cnt += 1
-                    if cnt == 10:
-                        raise Exception(str(e))
-
+            plex = classPlex.Plex(configuration)
+            plex.refresh_library(configuration.getValue("plexLibrary")[0])
 
         except Exception as e:
             logger = classLogger.Logger()
