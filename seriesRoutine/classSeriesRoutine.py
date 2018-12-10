@@ -44,7 +44,10 @@ class SeriesRoutine:
             episodes_list = ClassEpisodesList.EpisodesList()
             episodes_list.load(video_files, subs_files, audio_files, image_files)
 
-            episodes_list.log(directory_path)
+            episodes_list_log = episodes_list.log()
+
+            logger = classLogger.Logger()
+            logger.writeLog(directory_path, episodes_list_log, mode="w+")
 
             link = classLink.Link(configuration)
             link.prepareFiles(episodes_list.episodes_list)
@@ -70,7 +73,7 @@ class SeriesRoutine:
                 path = classFileOperations.FileOperations.dirname(path)
             else:
                 path = log_path
-            logger.writeLog(path, "error", str(e))
+            logger.writeLog(path, "error", [str(e)])
             traceback.print_exc()
 
         # TODO: Watcher должен работать с несколькими файлами, а не только одним

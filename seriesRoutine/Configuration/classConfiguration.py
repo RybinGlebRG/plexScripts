@@ -96,13 +96,15 @@ class Configuration:
             self.setValue("watcherPath", [ldir])
 
     def log(self):
-        logger = classLogger.Logger()
-        directory = classFileOperations.FileOperations.dirname(classFileOperations.FileOperations.abspath(__file__))
-        logger.writeLog(directory, "debug", "configurationMain:", "w+")
+        # logger = classLogger.Logger()
+        # directory = classFileOperations.FileOperations.dirname(classFileOperations.FileOperations.abspath(__file__))
+        lines = []
+        lines.append("configurationMain:")
         items = self.getAllPairs()
         for item in items:
-            logger.writeLog(directory, "debug", item.key + "=" + item.value)
-        logger.writeLog(directory, "debug", "-----------------------------------")
+            lines.append(item.key + "=" + item.value)
+        lines.append("-----------------------------------")
+        return lines
 
     def print(self):
         print("-----------------------------------")
@@ -131,7 +133,7 @@ class Configuration:
             return
         self.fill(classFileOperations.FileOperations.join(self.getValue("directoryPath")[0],
                                                           self.getValue("userConfigurationFile")[0]))
-        #self.print()
+        # self.print()
         self.deleteForbiddenSymbolsFromValue("titleName")
         self.formatSeasonNumber()
 
