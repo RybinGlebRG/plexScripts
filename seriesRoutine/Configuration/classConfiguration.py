@@ -76,7 +76,7 @@ class Configuration:
             self.setValue("seasonNumber", seasonNumber)
 
     def getAllPairs(self):
-        return self.keyValueList
+        return self.keyValueList.items()
 
     # def get_user_configuration(self,directory, fileName):
     #     foundDirectory = None
@@ -101,8 +101,8 @@ class Configuration:
         lines = []
         lines.append("configurationMain:")
         items = self.getAllPairs()
-        for item in items:
-            lines.append(item.key + "=" + item.value)
+        for key, value in items:
+            lines.append(key + "=" + value)
         lines.append("-----------------------------------")
         return lines
 
@@ -112,8 +112,8 @@ class Configuration:
         print("-----------------------------------")
         print("Configuration:")
         items = self.getAllPairs()
-        for item in items.items():
-            print(item)
+        for key, value in items:
+            print(key + "=" + value)
         print("-----------------------------------")
 
     def load(self, absolute_file_name):
@@ -145,3 +145,18 @@ class Configuration:
                                                             "userConfigurationFile")[0])),
             classFileOperations.FileOperations.join(self.getValue("directoryPath")[0],
                                                     self.getValue("configurationFileNameUsed")[0]))
+
+        folders = []
+        for folderList in classFileOperations.FileOperations.walk(self.getValue("directoryPath")[0]):
+            folders = folderList[1]
+            break
+        sourcePath = self.getValue("directoryPath")[0]
+        for folder in folders:
+            if self.isIncludes("sourcePossibleLocation", folder):
+                sourcePath = classFileOperations.FileOperations.join(self.getValue("directoryPath")[0], folder)
+                if self.getValue("linkAudio")[0] == "A":
+                    self.setValue("linkAudio", "N")
+                if self.getValue("linkSubs")[0] == "A":
+                    self.setValue("linkSubs", "N")
+                break
+        self.setValue("source_path", [sourcePath])

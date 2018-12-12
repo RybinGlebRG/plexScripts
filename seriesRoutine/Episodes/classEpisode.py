@@ -1,4 +1,4 @@
-from seriesRoutine import classFilesList
+from seriesRoutine.Files import classFilesList
 
 
 class Episode:

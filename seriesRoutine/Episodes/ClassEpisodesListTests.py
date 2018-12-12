@@ -1,5 +1,5 @@
 from seriesRoutine.Episodes import ClassEpisodesList
-from seriesRoutine import classFilesList, classFile
+from seriesRoutine.Files import classFile, classFilesList
 
 
 class EpisodesTests:

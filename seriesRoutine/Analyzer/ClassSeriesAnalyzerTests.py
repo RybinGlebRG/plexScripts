@@ -1,4 +1,4 @@
-from seriesRoutine import classFilesList, classFile
+from seriesRoutine.Files import classFile, classFilesList
 from seriesRoutine.Analyzer import ClassSeriesAnalyzer
 
 

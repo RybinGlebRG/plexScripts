@@ -1,5 +1,5 @@
 import classFileOperations
-from seriesRoutine import classFile
+from seriesRoutine.Files import classFile
 
 
 class FilesList:
@@ -50,24 +50,24 @@ class FilesList:
         return filtered
 
     def load(self, directoryPath, configuration):
-        def getSourcePath(directoryPath, configuration):
-            folders = []
-            for folderList in classFileOperations.FileOperations.walk(directoryPath):
-                folders = folderList[1]
-                break
-            sourcePath = directoryPath
-            for folder in folders:
-                if configuration.isIncludes("sourcePossibleLocation", folder):
-                    sourcePath = classFileOperations.FileOperations.join(directoryPath, folder)
-                    if configuration.getValue("linkAudio")[0] == "A":
-                        configuration.setValue("linkAudio", "N")
-                    if configuration.getValue("linkSubs")[0] == "A":
-                        configuration.setValue("linkSubs", "N")
-                    break
-            return sourcePath
+        # def getSourcePath(directoryPath, configuration):
+        #     folders = []
+        #     for folderList in classFileOperations.FileOperations.walk(directoryPath):
+        #         folders = folderList[1]
+        #         break
+        #     sourcePath = directoryPath
+        #     for folder in folders:
+        #         if configuration.isIncludes("sourcePossibleLocation", folder):
+        #             sourcePath = classFileOperations.FileOperations.join(directoryPath, folder)
+        #             if configuration.getValue("linkAudio")[0] == "A":
+        #                 configuration.setValue("linkAudio", "N")
+        #             if configuration.getValue("linkSubs")[0] == "A":
+        #                 configuration.setValue("linkSubs", "N")
+        #             break
+        #     return sourcePath
 
         langPath = classFileOperations.FileOperations.join(directoryPath, configuration.getValue("langPath")[0])
-        sourcePath = getSourcePath(directoryPath, configuration)
+        sourcePath = configuration.getValue("source_path")
 
         for file in classFileOperations.FileOperations.listdir(sourcePath):
             if classFileOperations.FileOperations.isfile(classFileOperations.FileOperations.join(sourcePath, file)):
@@ -80,6 +80,16 @@ class FilesList:
                 new_file = classFile.File(file, vector[0])
                 new_file.check_specified(configuration)
                 self.add(new_file)
+
+    def load_v2(self, directory, suffixes, configuration, is_recursive=True):
+        for vector in classFileOperations.FileOperations.walk(directory):
+            for file in vector[2]:
+                new_file = classFile.File(file, vector[0])
+                if new_file.getSuffix() in suffixes:
+                    new_file.check_specified(configuration)
+                    self.add(new_file)
+            if not is_recursive:
+                break
 
     def clear(self):
         self.filesList.clear()

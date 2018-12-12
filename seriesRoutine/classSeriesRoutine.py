@@ -7,7 +7,7 @@ import classLogger
 import classFileOperations
 import traceback
 import sys
-from seriesRoutine import classFilesList
+from seriesRoutine.Files import classFilesList
 
 
 class SeriesRoutine:
@@ -35,13 +35,29 @@ class SeriesRoutine:
             directory_path = configuration.getValue("directoryPath")[0]
 
             log_path = directory_path
-            files_list = classFilesList.FilesList()
-            files_list.load(directory_path, configuration)
+            # files_list = classFilesList.FilesList()
+            # files_list.load(directory_path, configuration)
+            #
+            # video_files = files_list.filter_by_suffixes(configuration.getValue("videoFileSuffixes"))
+            # audio_files = files_list.filter_by_suffixes(configuration.getValue("audioFileSuffixes"))
+            # subs_files = files_list.filter_by_suffixes(configuration.getValue("subsFileSuffixes"))
+            # image_files = files_list.filter_by_suffixes(configuration.getValue("imageFileSuffixes"))
 
-            video_files = files_list.filter_by_suffixes(configuration.getValue("videoFileSuffixes"))
-            audio_files = files_list.filter_by_suffixes(configuration.getValue("audioFileSuffixes"))
-            subs_files = files_list.filter_by_suffixes(configuration.getValue("subsFileSuffixes"))
-            image_files = files_list.filter_by_suffixes(configuration.getValue("imageFileSuffixes"))
+            video_files = classFilesList.FilesList()
+            video_files.load_v2(configuration.getValue("sourcePath"), configuration.getValue("videoFileSuffixes"),
+                                configuration, is_recursive=False)
+
+            audio_files = classFilesList.FilesList()
+            audio_files.load_v2(configuration.getValue("langPath"), configuration.getValue("audioFileSuffixes"),
+                                configuration)
+
+            subs_files = classFilesList.FilesList()
+            subs_files.load_v2(configuration.getValue("langPath"), configuration.getValue("subsFileSuffixes"),
+                               configuration)
+
+            image_files = classFilesList.FilesList()
+            image_files.load_v2(configuration.getValue("sourcePath"), configuration.getValue("imageFileSuffixes"),
+                                configuration, is_recursive=False)
 
             ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(video_files)
             ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subs_files)
@@ -70,7 +86,7 @@ class SeriesRoutine:
                 path = classFileOperations.FileOperations.dirname(path)
             else:
                 path = log_path
-            logger.writeLog(path, "error", [str(e)])
+            logger.writeLog(path, [str(e)], "error")
             traceback.print_exc()
 
         # TODO: Watcher должен работать с несколькими файлами, а не только одним
