@@ -76,8 +76,15 @@ class EpisodesTests:
 
         return result
 
+    def case_2(self):
+        """
+        This case tests ability to form episodes from two groups of video files - "Bleach case"
+        """
+        raise NotImplementedError
+
     def run(self):
         self.cases.append(self.case_1)
+        self.cases.append(self.case_2)
 
         for case in self.cases:
             if not case():

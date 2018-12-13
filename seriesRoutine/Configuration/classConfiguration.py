@@ -102,7 +102,7 @@ class Configuration:
         lines.append("configurationMain:")
         items = self.getAllPairs()
         for key, value in items:
-            lines.append(key + "=" + value)
+            lines.append(key + "=" + str(value))
         lines.append("-----------------------------------")
         return lines
 
@@ -113,12 +113,19 @@ class Configuration:
         print("Configuration:")
         items = self.getAllPairs()
         for key, value in items:
-            print(key + "=" + value)
+            print(key + "=" + str(value))
         print("-----------------------------------")
 
+    def make_absolute(self, directory, relative_path):
+        absolute = classFileOperations.FileOperations.join(directory, relative_path)
+        return absolute
+
     def load(self, absolute_file_name):
+        # Fill with base configuration
         self.fill(absolute_file_name)
         self.checkWatcherPath()
+
+        # Find user configuration file
         foundDirectory = None
         foundFile = None
         for root, dirs, files in classFileOperations.FileOperations.walk(self.getValue("watcherPath")[0]):
@@ -129,14 +136,18 @@ class Configuration:
                     break
         self.setValue("directoryPath", [foundDirectory])
         self.setValue("userConfigurationFile", [foundFile])
+
+        # If not found user configuration file
         if self.getValue("userConfigurationFile") is None:
             return
+
+        # Fill with user configuration
         self.fill(classFileOperations.FileOperations.join(self.getValue("directoryPath")[0],
                                                           self.getValue("userConfigurationFile")[0]))
-        # self.print()
         self.deleteForbiddenSymbolsFromValue("titleName")
         self.formatSeasonNumber()
 
+        # Rename user configuration file to highlight its usage
         classFileOperations.FileOperations.rename(
             classFileOperations.FileOperations.join(self.getValue("directoryPath")[0],
                                                     classFileOperations.FileOperations.join(
@@ -146,6 +157,8 @@ class Configuration:
             classFileOperations.FileOperations.join(self.getValue("directoryPath")[0],
                                                     self.getValue("configurationFileNameUsed")[0]))
 
+        # TODO: Following cannot work with multiple source directories
+        # Find video source directory
         folders = []
         for folderList in classFileOperations.FileOperations.walk(self.getValue("directoryPath")[0]):
             folders = folderList[1]
@@ -154,9 +167,14 @@ class Configuration:
         for folder in folders:
             if self.isIncludes("sourcePossibleLocation", folder):
                 sourcePath = classFileOperations.FileOperations.join(self.getValue("directoryPath")[0], folder)
+                # Is Lang needed (Do we have container?)
                 if self.getValue("linkAudio")[0] == "A":
                     self.setValue("linkAudio", "N")
                 if self.getValue("linkSubs")[0] == "A":
                     self.setValue("linkSubs", "N")
                 break
         self.setValue("source_path", [sourcePath])
+
+        # Set Lang source directory
+        self.setValue("lang_path", [
+            classFileOperations.FileOperations.join(self.getValue("directoryPath")[0], self.getValue("lang_path")[0])])

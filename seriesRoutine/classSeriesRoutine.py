@@ -44,20 +44,20 @@ class SeriesRoutine:
             # image_files = files_list.filter_by_suffixes(configuration.getValue("imageFileSuffixes"))
 
             video_files = classFilesList.FilesList()
-            video_files.load_v2(configuration.getValue("sourcePath"), configuration.getValue("videoFileSuffixes"),
-                                configuration, is_recursive=False)
+            video_files.load(configuration.getValue("source_path"), configuration.getValue("videoFileSuffixes"),
+                             configuration, is_recursive=False)
 
             audio_files = classFilesList.FilesList()
-            audio_files.load_v2(configuration.getValue("langPath"), configuration.getValue("audioFileSuffixes"),
-                                configuration)
+            audio_files.load(configuration.getValue("lang_path"), configuration.getValue("audioFileSuffixes"),
+                             configuration)
 
             subs_files = classFilesList.FilesList()
-            subs_files.load_v2(configuration.getValue("langPath"), configuration.getValue("subsFileSuffixes"),
-                               configuration)
+            subs_files.load(configuration.getValue("lang_path"), configuration.getValue("subsFileSuffixes"),
+                            configuration)
 
             image_files = classFilesList.FilesList()
-            image_files.load_v2(configuration.getValue("sourcePath"), configuration.getValue("imageFileSuffixes"),
-                                configuration, is_recursive=False)
+            image_files.load(configuration.getValue("source_path"), configuration.getValue("imageFileSuffixes"),
+                             configuration, is_recursive=False)
 
             ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(video_files)
             ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subs_files)
