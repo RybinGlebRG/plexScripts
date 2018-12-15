@@ -116,9 +116,16 @@ class Configuration:
             print(key + "=" + str(value))
         print("-----------------------------------")
 
-    def make_absolute(self, directory, relative_path):
-        absolute = classFileOperations.FileOperations.join(directory, relative_path)
-        return absolute
+    def left_add_to_path(self, key, add_value):
+        values = self.getValue(key)
+        if values is None:
+            return
+        result = []
+        for value in values:
+            if value is not None:
+                new_value = classFileOperations.FileOperations.join(add_value, value)
+                result.append(new_value)
+        self.setValue(key, result)
 
     def load(self, absolute_file_name):
         # Fill with base configuration
@@ -159,22 +166,25 @@ class Configuration:
 
         # TODO: Following cannot work with multiple source directories
         # Find video source directory
-        folders = []
-        for folderList in classFileOperations.FileOperations.walk(self.getValue("directoryPath")[0]):
-            folders = folderList[1]
-            break
-        sourcePath = self.getValue("directoryPath")[0]
-        for folder in folders:
-            if self.isIncludes("sourcePossibleLocation", folder):
-                sourcePath = classFileOperations.FileOperations.join(self.getValue("directoryPath")[0], folder)
-                # Is Lang needed (Do we have container?)
-                if self.getValue("linkAudio")[0] == "A":
-                    self.setValue("linkAudio", "N")
-                if self.getValue("linkSubs")[0] == "A":
-                    self.setValue("linkSubs", "N")
+        sourcePath=self.getValue("source_path")
+        if sourcePath is None:
+            folders = []
+            for folderList in classFileOperations.FileOperations.walk(self.getValue("directoryPath")[0]):
+                folders = folderList[1]
                 break
-        self.setValue("source_path", [sourcePath])
+            sourcePath = self.getValue("directoryPath")[0]
+            for folder in folders:
+                if self.isIncludes("sourcePossibleLocation", folder):
+                    sourcePath = classFileOperations.FileOperations.join(self.getValue("directoryPath")[0], folder)
+                    # Is Lang needed (Do we have a container?)
+                    if self.getValue("linkAudio")[0] == "A":
+                        self.setValue("linkAudio", "N")
+                    if self.getValue("linkSubs")[0] == "A":
+                        self.setValue("linkSubs", "N")
+                    break
+            self.setValue("source_path", [sourcePath])
+        else:
+            self.left_add_to_path("source_path",self.getValue("directoryPath")[0])
 
-        # Set Lang source directory
-        self.setValue("lang_path", [
-            classFileOperations.FileOperations.join(self.getValue("directoryPath")[0], self.getValue("lang_path")[0])])
+        # Set Lang source directory full path
+        self.left_add_to_path("lang_path", self.getValue("directoryPath")[0])

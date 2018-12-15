@@ -50,7 +50,7 @@ class SeriesAnalyzer:
             if file.number is not None:
                 hypoteses.append(file.number)
             else:
-                #print(file.possibleSeriesNumbers[currentHypothesis])
+                # print(file.possibleSeriesNumbers[currentHypothesis])
                 hypoteses.append(file.possibleSeriesNumbers[currentHypothesis])
         hypoteses.sort()
         # print(hypoteses)
@@ -75,7 +75,7 @@ class SeriesAnalyzer:
         # print(differsByOne)
         # print(fromOne)
         # print(fromZero)
-        if (fromOne or fromZero) and isGrowing:
+        if isGrowing:  # (fromOne or fromZero) and
             return True
         else:
             return False
@@ -117,5 +117,4 @@ class SeriesAnalyzer:
         for group in groups:
             for file in group.files:
                 if file.number is None:
-                    file.number=file.possibleSeriesNumbers[group.hypothesis]
-
+                    file.number = file.possibleSeriesNumbers[group.hypothesis]
