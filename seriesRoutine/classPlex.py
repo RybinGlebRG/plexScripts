@@ -5,12 +5,12 @@ import xml.etree.ElementTree as ET
 
 class Plex:
 
-    def __init__(self,configuration):
+    def __init__(self, configuration):
         self.configuration = configuration
-        self.plexUser=self.configuration.getValue("plexUser")
-        self.plexPass=self.configuration.getValue("plexPass")
-        self.plexIPAddress=self.configuration.getValue("plexIPAddress")
-        self.plexPort=self.configuration.getValue("plexPort")
+        self.plexUser = self.configuration.getValue("plexUser")[0]
+        self.plexPass = self.configuration.getValue("plexPass")[0]
+        self.plexIPAddress = self.configuration.getValue("plexIPAddress")[0]
+        self.plexPort = self.configuration.getValue("plexPort")[0]
         self.authToken = self.getAuthToken()
 
     def getAuthToken(self):
@@ -22,7 +22,7 @@ class Plex:
         authToken = json.loads(response.text)["user"]["authToken"]
         return authToken
 
-    def getLibraryKey(self,plexLibrary):
+    def getLibraryKey(self, plexLibrary):
         response = requests.get(
             "http://" + self.plexIPAddress + ":" + self.plexPort + "/library/sections/?X-Plex-Token=" + self.authToken)
         # print(response.text)
@@ -35,10 +35,25 @@ class Plex:
                 break
         return libraryKey
 
-    def refershLibrary(self,plexLibrary):
+    def refresh_library(self, plex_library):
+        is_successful = False
+        cnt = 0
+        while not is_successful:
+            try:
+                library_key = self.getLibraryKey(plex_library)
+                requests.get(
+                    "http://" + self.plexIPAddress + ":" + self.plexPort + "/library/sections/" + library_key +
+                    "/refresh?X-Plex-Token=" + self.authToken)
 
-      # print(authToken)
-        libraryKey=self.getLibraryKey(plexLibrary)
-        #print(libraryKey)
-        response=requests.get("http://"+self.plexIPAddress+":"+self.plexPort+"/library/sections/"+libraryKey+"/refresh?X-Plex-Token=" + self.authToken)
-        #print(response)
+                is_successful = True
+            except Exception as e:
+                cnt += 1
+                if cnt == 10:
+                    raise Exception(str(e))
+
+        # # print(authToken)
+        # libraryKey = self.getLibraryKey(plexLibrary)
+        # # print(libraryKey)
+        # response = requests.get(
+        #     "http://" + self.plexIPAddress + ":" + self.plexPort + "/library/sections/" + libraryKey + "/refresh?X-Plex-Token=" + self.authToken)
+        # # print(response)

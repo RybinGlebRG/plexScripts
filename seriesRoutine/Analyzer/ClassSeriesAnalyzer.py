@@ -1,14 +1,11 @@
 import re
-from seriesRoutine import classAnalyzingGroup
+from seriesRoutine.Analyzer import classAnalyzingGroup
 
 
 class SeriesAnalyzer:
 
     def __init__(self):
         pass
-        # self.analyzingGroupsList = []
-        # self.files = files
-        # self.currentHypothesis = -1
 
     @staticmethod
     def findHypoteses(files):
@@ -53,7 +50,7 @@ class SeriesAnalyzer:
             if file.number is not None:
                 hypoteses.append(file.number)
             else:
-                #print(file.possibleSeriesNumbers[currentHypothesis])
+                # print(file.possibleSeriesNumbers[currentHypothesis])
                 hypoteses.append(file.possibleSeriesNumbers[currentHypothesis])
         hypoteses.sort()
         # print(hypoteses)
@@ -78,7 +75,7 @@ class SeriesAnalyzer:
         # print(differsByOne)
         # print(fromOne)
         # print(fromZero)
-        if (fromOne or fromZero) and isGrowing:
+        if isGrowing:  # (fromOne or fromZero) and
             return True
         else:
             return False
@@ -91,7 +88,6 @@ class SeriesAnalyzer:
         for group in groups:
             # print("------------------------")
             # print(group.path)
-            # TODO: Получение длины нужно переписать
             # Полагаем, что в группе файлов все файлы, которые отличаются только номером серии
             # имеют номер серии, равный None. Файлы, отличающиеся от основных должны быть явно
             # прописаны в пользовательской конфигурации и на данный момент уже иметь номер серии
@@ -100,6 +96,7 @@ class SeriesAnalyzer:
                 # print(file.fileName)
                 if file.number is None:
                     length = len(file.possibleSeriesNumbers)
+                    break
             for i in range(0, length):
                 currentHypothesis = i
                 conditionsMet = SeriesAnalyzer.checkConditionsForGroup(group, currentHypothesis)
@@ -114,30 +111,10 @@ class SeriesAnalyzer:
     def setFileNumber(files):
         SeriesAnalyzer.findHypoteses(files)
 
-        # for file in files:
-        #     print(file.fileName)
-        #     print(file.possibleSeriesNumbers)
-        #     print("-------------------------------")
-
         groups = SeriesAnalyzer.divideByGroup(files)
         SeriesAnalyzer.analyzeHypoteses(files, groups)
 
         for group in groups:
-            #max_number = 0
             for file in group.files:
                 if file.number is None:
-                    file.number=file.possibleSeriesNumbers[group.hypothesis]
-            #     if file.number is not None:
-            #         cur_num = file.number
-            #     else:
-            #         cur_num = file.possibleSeriesNumbers[group.hypothesis]
-            #
-            #     if cur_num > max_number:
-            #         max_number = cur_num
-            # for file in group.files:
-            #     if file.number is not None:
-            #         file.number = file.number  # .lstrip("0").zfill(len(str(max_number)))
-            #     else:
-            #         file.number = file.possibleSeriesNumbers[
-            #             group.hypothesis]  # .lstrip("0").zfill(len(str(max_number)))
-
+                    file.number = file.possibleSeriesNumbers[group.hypothesis]

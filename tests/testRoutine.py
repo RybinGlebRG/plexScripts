@@ -1,52 +1,59 @@
-from tests.testData.case_1 import case_1
-from tests.testData.case_2 import case_2
-from tests.testData.case_3 import case_3
-from seriesRoutine import classFactory, classSeriesAnalyzer, classEpisode
-import sys
+# from seriesRoutine.Analyzer import classSeriesAnalyzer, unit_test
+from seriesRoutine.Analyzer import ClassSeriesAnalyzerTests
+from seriesRoutine.Episodes import ClassEpisodesListTests
+from seriesRoutine.Files import ClassFilesListTests
 
 
 # case_1.run()
 
-def check(episodes_list, model_list):
-    episodes_list.sort(key=lambda item: item.episodeNumber)
-    model_list.sort(key=lambda item: item.episodeNumber)
-    if len(episodes_list) != len(model_list):
-        return False
-
-    for i in range(0, len(episodes_list)):
-        if not classEpisode.Episode.are_equal(episodes_list[i], model_list[i]):
-            return False
-    return True
-
 
 def run():
-    configuration = classFactory.Factory.createConfiguration(sys.argv[1])
+    result = True
 
-    directoryPath = configuration.getValue("directoryPath")
+    analyzer_tests = ClassSeriesAnalyzerTests.AnalyzerTests()
+    result = result and analyzer_tests.run()
 
-    filesList = classFactory.Factory.createFilesList(directoryPath, configuration)
+    episodes_tests = ClassEpisodesListTests.EpisodesTests()
+    result = result and episodes_tests.run()
 
-    videoFiles = filesList.filterVideoFiles()
-    audioFiles = filesList.filterAudioFiles()
-    subsFiles = filesList.filterSubsFiles()
-    imageFiles = filesList.filterImageFiles()
-
-    classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(videoFiles.get_list())
-    classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subsFiles.get_list())
-    classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audioFiles.get_list())
-
-    episodesList = classFactory.Factory.createEpisodesList(videoFiles.get_list(), subsFiles.get_list(),
-                                                           audioFiles.get_list(), imageFiles.get_list()[0],
-                                                           configuration)
-    result = check(episodesList, case_1.get_model_list())
+    files_tests = ClassFilesListTests.FilesListTests()
+    result = result and files_tests.run()
     print(result)
 
 
-case_1.prepare_conf()
-run()
-
-case_2.prepare_conf()
-run()
-
-case_3.prepare_conf()
+#     configuration = classConfiguration.Configuration()
+#     configuration.load(sys.argv[1])
+#     if configuration is None:
+#         return None
+#     directory_path = None
+#     for value in configuration.getValue("directoryPath"):
+#         directory_path = value
+#         break
+#     log_path = directory_path
+#     filesList = classFilesList.FilesList()
+#     filesList.load(directory_path, configuration)
+#
+#     video_files = filesList.filter_by_suffixes(configuration.getValue("videoFileSuffixes"))
+#     audio_files = filesList.filter_by_suffixes(configuration.getValue("audioFileSuffixes"))
+#     subs_files = filesList.filter_by_suffixes(configuration.getValue("subsFileSuffixes"))
+#     image_files = filesList.filter_by_suffixes(configuration.getValue("imageFileSuffixes"))
+#
+#     classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(video_files)
+#     classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(subs_files)
+#     classSeriesAnalyzer.SeriesAnalyzer.setFileNumber(audio_files)
+#
+#     episodes_list = ClassEpisodesList.EpisodesList()
+#     episodes_list.load(video_files, subs_files, audio_files, image_files)
+#     result = episodes_list == case_1.get_model_list()
+#     print(result)
+#
+#
+# case_1.prepare_conf()
+# run()
+#
+# case_2.prepare_conf()
+# run()
+#
+# case_3.prepare_conf()
+# run()
 run()
