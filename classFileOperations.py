@@ -86,9 +86,18 @@ class FileOperations:
         return lines
 
     @staticmethod
-    def writeLineToFile(path, line, mode="a+"):
-        #print(line)
-        #print(repr(line))
-        file = io.open(path, mode=mode, newline="\r\n", encoding="utf-8", errors="surrogateescape")
+    def writeLineToFile(file, line):
+        # print(line)
+        # print(repr(line))
+        # file = io.open(path, mode=mode, newline="\r\n", encoding="utf-8", errors="surrogateescape")
         file.write(line + "\n")
+        # file.close()
+
+    @staticmethod
+    def open_file(path, mode="a+"):
+        file = io.open(path, mode=mode, newline="\r\n", encoding="utf-8", errors="surrogateescape")
+        return file
+
+    @staticmethod
+    def close_file(file):
         file.close()

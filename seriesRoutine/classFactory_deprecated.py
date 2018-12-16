@@ -34,16 +34,16 @@ class Factory:
     #     newFile = classFile.File(file.fileName, file.path)
     #     newFile.number = file.number
     #     newFile.possibleSeriesNumbers = file.possibleSeriesNumbers
-    #     newFile.linkFileName = file.linkFileName
+    #     newFile.link_target = file.link_target
     #     return newFile
 
     # @staticmethod
     # def createEpisode(videoFile, subsFiles, audioFiles, imageFile):
     #     episode = classEpisode.Episode(videoFile.number)
-    #     episode.video_file = videoFile
+    #     episode.video_files = videoFile
     #     episode.subs_files = subsFiles
     #     episode.audio_files = audioFiles
-    #     episode.image_file = imageFile
+    #     episode.image_files = imageFile
     #     return episode
 
     # @staticmethod

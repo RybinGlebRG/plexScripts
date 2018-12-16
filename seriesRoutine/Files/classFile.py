@@ -4,7 +4,8 @@ class File:
         self.number = number
         self.fileName = file_name
         self.path = path
-        self.linkFileName = None
+        self.link_target = None
+        self.link_source = None
         self.possibleSeriesNumbers = []
 
     def getSuffix(self):
@@ -47,6 +48,6 @@ class File:
     def copy(self):
         file = File(self.fileName, self.path)
         file.number = self.number
-        file.linkFileName = self.linkFileName
+        file.link_target = self.link_target
         file.possibleSeriesNumbers = self.possibleSeriesNumbers.copy()
         return file

@@ -47,11 +47,14 @@ class EpisodesList:
         for episode in self.episodes_list:
             lines.append("------------------------------------")
             lines.append(str(episode.episode_number) + ":")
-            lines.append(episode.video_file.fileName)
+            for video_file in episode.video_files:
+                lines.append("Video: "+video_file.fileName)
             for audioFile in episode.audio_files:
-                lines.append(audioFile.fileName)
+                lines.append("Audio: "+audioFile.fileName)
             for subsFile in episode.subs_files:
-                lines.append(subsFile.fileName)
+                lines.append("Subtitle: "+subsFile.fileName)
+            for image_file in episode.image_files:
+                lines.append("Image: "+image_file.fileName)
         return lines
 
         # logger = classLogger.Logger()
@@ -60,7 +63,7 @@ class EpisodesList:
         # for episode in self.episodes_list:
         #     logger.writeLog(directory, "info", "------------------------------------")
         #     logger.writeLog(directory, "info", str(episode.episode_number) + ":")
-        #     logger.writeLog(directory, "info", episode.video_file.fileName)
+        #     logger.writeLog(directory, "info", episode.video_files.fileName)
         #     for audioFile in episode.audio_files:
         #         logger.writeLog(directory, "info", audioFile.fileName)
         #     for subsFile in episode.subs_files:

@@ -1,5 +1,6 @@
 import os
 import classFileOperations
+import datetime
 
 
 class Logger:
@@ -15,6 +16,9 @@ class Logger:
         # classFileOperations.FileOperations.writeLineToFile(
         #     classFileOperations.FileOperations.join(directory, level + "_log.txt"), string, mode)
         # #print(string)
+        file = classFileOperations.FileOperations.open_file(
+            classFileOperations.FileOperations.join(directory, level + "_log.txt"), mode)
+        classFileOperations.FileOperations.writeLineToFile(file, str(datetime.datetime.now()))
         for line in lines:
-            classFileOperations.FileOperations.writeLineToFile(
-                classFileOperations.FileOperations.join(directory, level + "_log.txt"), line, mode)
+            classFileOperations.FileOperations.writeLineToFile(file,  line)
+        classFileOperations.FileOperations.close_file(file)

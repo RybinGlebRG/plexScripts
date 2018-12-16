@@ -35,13 +35,6 @@ class SeriesRoutine:
             directory_path = configuration.getValue("directoryPath")[0]
 
             log_path = directory_path
-            # files_list = classFilesList.FilesList()
-            # files_list.load(directory_path, configuration)
-            #
-            # video_files = files_list.filter_by_suffixes(configuration.getValue("videoFileSuffixes"))
-            # audio_files = files_list.filter_by_suffixes(configuration.getValue("audioFileSuffixes"))
-            # subs_files = files_list.filter_by_suffixes(configuration.getValue("subsFileSuffixes"))
-            # image_files = files_list.filter_by_suffixes(configuration.getValue("imageFileSuffixes"))
 
             video_files = classFilesList.FilesList()
             video_files.load(configuration.getValue("source_path"), configuration.getValue("videoFileSuffixes"),

@@ -11,7 +11,7 @@ class Link:
         self.mount_point = self.configuration.getValue("mountPoint")[0]
         self.true_mount_point = self.configuration.getValue("trueMountPoint")[0]
 
-    def prepare_files(self, episodes_list, title_name, season_number):
+    def prepare_files(self, episodes_list, title_name, season_number, target_path, mount_point, true_mount_point):
         def increment_counter(cnt):
             if cnt == "":
                 cnt = ".2"
@@ -22,31 +22,52 @@ class Link:
                 cnt = "." + cnt
             return cnt
 
-        def get_link_name(file, counter=""):
+        def get_link_target(file, counter=""):
             max_num = 0
             for item in episodes_list:
                 if item.episode_number > max_num:
-                    max_num = item.episodeNumber
+                    max_num = item.episode_number
             max_num = len(str(max_num))
 
             link_name = title_name + " - s" + season_number + "e" + (
                 str(file.number)).zfill(max_num) + counter + "." + file.getSuffix()
-            return link_name
+            # link_name = classFileOperations.FileOperations.join(target_path, link_name)
+            targetFolder = classFileOperations.FileOperations.join(
+                classFileOperations.FileOperations.join(target_path, title_name), "Season " + season_number)
+            link_name = classFileOperations.FileOperations.join(targetFolder, link_name)
+            file.link_target = link_name
+
+        def get_link_source(file, mount_point, true_mount_point):
+            true_mount_path = file.path.replace(mount_point, true_mount_point)
+            link_name = classFileOperations.FileOperations.join(true_mount_path, file.fileName)
+            file.link_source = link_name
 
         for episode in episodes_list:
-            episode.video_file.linkFileName = get_link_name(episode.video_file)
-            episode.imageFile.linkFileName = get_link_name(episode.image_file)
             counter = ""
-            for item in episode.audioFiles:
-                item.linkFileName = get_link_name(item)
-                counter = increment_counter(counter)
-            counter = ""
-            for item in episode.subsFiles:
-                # print(counter)
-                item.linkFileName = get_link_name(item)
+            for video_file in episode.video_files:
+                get_link_target(video_file, counter)
+                get_link_source(video_file, mount_point, true_mount_point)
                 counter = increment_counter(counter)
 
-    def checkTarget(self, targetPath, titleName, seasonNumber):
+            counter = ""
+            for image_file in episode.image_files:
+                get_link_target(image_file, counter)
+                get_link_source(image_file, mount_point, true_mount_point)
+                counter = increment_counter(counter)
+
+            counter = ""
+            for audio_file in episode.audio_files:
+                get_link_target(audio_file, counter)
+                get_link_source(audio_file, mount_point, true_mount_point)
+                counter = increment_counter(counter)
+
+            counter = ""
+            for subs_file in episode.subs_files:
+                get_link_target(subs_file, counter)
+                get_link_source(subs_file, mount_point, true_mount_point)
+                counter = increment_counter(counter)
+
+    def check_target(self, targetPath, titleName, seasonNumber):
         titleExists = classFileOperations.FileOperations.exists(
             classFileOperations.FileOperations.join(targetPath, titleName))
         seasonExists = False
@@ -78,28 +99,16 @@ class Link:
         target_path = self.target_path
         mount_point = self.mount_point
         true_mount_point = self.true_mount_point
+        self.prepare_files(episodes_list, title_name, season_number, target_path, mount_point, true_mount_point)
 
         if not self.configuration.isIncludes("wrongOSNames", classFileOperations.FileOperations.osName()):
-            self.prepare_files(episodes_list, title_name, season_number)
-            self.checkTarget(target_path, title_name, season_number)
-            targetFolder = classFileOperations.FileOperations.join(
-                classFileOperations.FileOperations.join(target_path, title_name), "Season " + season_number)
+            self.check_target(target_path, title_name, season_number)
             for episode in episodes_list:
-                classFileOperations.FileOperations.symlink(classFileOperations.FileOperations.join(
-                    episode.video_file.path.replace(mount_point, true_mount_point),
-                    episode.video_file.fileName)
-                    , classFileOperations.FileOperations.join(targetFolder, episode.video_file.linkFileName))
-                classFileOperations.FileOperations.symlink(classFileOperations.FileOperations.join(
-                    episode.imageFile.path.replace(mount_point, true_mount_point),
-                    episode.imageFile.fileName)
-                    , classFileOperations.FileOperations.join(targetFolder, episode.imageFile.linkFileName))
-                for item in episode.subsFiles:
-                    classFileOperations.FileOperations.symlink(classFileOperations.FileOperations.join(
-                        item.path.replace(mount_point, true_mount_point),
-                        item.fileName)
-                        , classFileOperations.FileOperations.join(targetFolder, item.linkFileName))
-                for item in episode.audioFiles:
-                    classFileOperations.FileOperations.symlink(classFileOperations.FileOperations.join(
-                        item.path.replace(mount_point, true_mount_point),
-                        item.fileName)
-                        , classFileOperations.FileOperations.join(targetFolder, item.linkFileName))
+                for video_file in episode.video_files:
+                    classFileOperations.FileOperations.symlink(video_file.link_source, video_file.link_target)
+                for image_file in episode.image_files:
+                    classFileOperations.FileOperations.symlink(image_file.link_source, image_file.link_target)
+                for subs_file in episode.subs_files:
+                    classFileOperations.FileOperations.symlink(subs_file.link_source, subs_file.link_target)
+                for audio_file in episode.audio_files:
+                    classFileOperations.FileOperations.symlink(audio_file.link_source, audio_file.link_target)

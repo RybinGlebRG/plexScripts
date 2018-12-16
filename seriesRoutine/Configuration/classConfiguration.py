@@ -152,7 +152,7 @@ class Configuration:
         self.fill(classFileOperations.FileOperations.join(self.getValue("directoryPath")[0],
                                                           self.getValue("userConfigurationFile")[0]))
         self.deleteForbiddenSymbolsFromValue("titleName")
-        self.formatSeasonNumber()
+        #self.formatSeasonNumber()
 
         # Rename user configuration file to highlight its usage
         classFileOperations.FileOperations.rename(
