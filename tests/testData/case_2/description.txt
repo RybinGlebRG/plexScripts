@@ -1,2 +1,0 @@
-Test description:
-Testing ability to add series by specifying them in user configuration file

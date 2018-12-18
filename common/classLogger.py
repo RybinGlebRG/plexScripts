@@ -1,5 +1,4 @@
-import os
-import classFileOperations
+from common import classFileOperations
 import datetime
 
 
@@ -20,5 +19,5 @@ class Logger:
             classFileOperations.FileOperations.join(directory, level + "_log.txt"), mode)
         classFileOperations.FileOperations.writeLineToFile(file, str(datetime.datetime.now()))
         for line in lines:
-            classFileOperations.FileOperations.writeLineToFile(file,  line)
+            classFileOperations.FileOperations.writeLineToFile(file, line)
         classFileOperations.FileOperations.close_file(file)

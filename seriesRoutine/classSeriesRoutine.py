@@ -1,23 +1,14 @@
-from seriesRoutine import classLink, \
-    classPlex
+from seriesRoutine import classLink, classPlex
 from seriesRoutine.Episodes import ClassEpisodesList
 from seriesRoutine.Configuration import classConfiguration
 from seriesRoutine.Analyzer import ClassSeriesAnalyzer
-import classLogger
-import classFileOperations
+from common import classFileOperations, classLogger
 import traceback
 import sys
 from seriesRoutine.Files import classFilesList
 
 
 class SeriesRoutine:
-
-    def __init__(self):
-        pass
-
-    # def refreshPlex(self, configuration):
-    #     plex = classPlex.Plex(configuration)
-    #     plex.refershLibrary(configuration.getValue("plexLibrary")[0])
 
     def run(self):
         log_path = None

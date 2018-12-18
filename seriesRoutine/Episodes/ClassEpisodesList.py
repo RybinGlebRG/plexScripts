@@ -56,15 +56,3 @@ class EpisodesList:
             for image_file in episode.image_files:
                 lines.append("Image: "+image_file.fileName)
         return lines
-
-        # logger = classLogger.Logger()
-        # self.episodes_list.sort(key=lambda item: item.episode_number)
-        # logger.writeLog(directory, "info", "Файлы, сгруппированные по сериям:", "w+")
-        # for episode in self.episodes_list:
-        #     logger.writeLog(directory, "info", "------------------------------------")
-        #     logger.writeLog(directory, "info", str(episode.episode_number) + ":")
-        #     logger.writeLog(directory, "info", episode.video_files.fileName)
-        #     for audioFile in episode.audio_files:
-        #         logger.writeLog(directory, "info", audioFile.fileName)
-        #     for subsFile in episode.subs_files:
-        #         logger.writeLog(directory, "info", subsFile.fileName)

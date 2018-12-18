@@ -1,5 +1,6 @@
 from seriesRoutine.Files import classFile, classFilesList
 from seriesRoutine.Analyzer import ClassSeriesAnalyzer
+from seriesRoutine.Analyzer.TestCases.GeneralCase import GeneralCase
 
 
 class AnalyzerTests:
@@ -7,42 +8,14 @@ class AnalyzerTests:
     def __init__(self):
         self.cases = []
 
-    def case_1(self):
-        """
-        This case tests multiple groups analysis.
-        There are three groups with the same names but different paths.
-        """
-
-        def arrange():
-            files = classFilesList.FilesList()
-            for i in range(1, 4):
-                files.add(classFile.File(str(i) + ".ac3", "/Lang/Sound/3"))
-            for i in range(1, 4):
-                files.add(classFile.File(str(i) + ".ac3", "/Lang/Sound/2"))
-            for i in range(1, 4):
-                files.add(classFile.File(str(i) + ".ac3", "/Lang/Sound/1"))
-            return files
-
-        def act(files):
-            ClassSeriesAnalyzer.SeriesAnalyzer.setFileNumber(files)
-
-        def check(files):
-            for file in files:
-                number = int(file.fileName[:1])
-                if number != file.number:
-                    return False
-            return True
-
-        files = arrange()
-        act(files)
-        result = check(files)
-
-        return result
-
     def run(self):
-        self.cases.append(self.case_1)
+        self.cases.append(GeneralCase.general_case())
 
-        for case in self.cases:
-            if not case():
+        for test_case in self.cases:
+            test_case.run()
+            if test_case.result is False:
+                print(test_case.description + ": Failed")
                 return False
-        return True
+            else:
+                print(test_case.description + ": Passed")
+                return True

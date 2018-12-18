@@ -1,6 +1,5 @@
 from seriesRoutine.Configuration import ClassParser
-import classFileOperations
-import classLogger
+from common import classFileOperations
 import sys
 import datetime
 

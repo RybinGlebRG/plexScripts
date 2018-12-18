@@ -1,4 +1,4 @@
-import classFileOperations
+from common import classFileOperations
 
 
 class Link:

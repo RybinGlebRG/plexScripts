@@ -1,4 +1,4 @@
-import classFileOperations
+from common import classFileOperations
 from seriesRoutine.Files import classFile
 
 
